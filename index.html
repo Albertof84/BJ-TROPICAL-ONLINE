@@ -20,6 +20,7 @@
             --notice-bg: #fff3cd;
             --notice-border: #ffc107;
             --notice-text: #856404;
+            --skeleton-bg: #e0e0e0;
         }
 
         * { margin:0; padding:0; box-sizing:border-box; }
@@ -90,7 +91,7 @@
         .header-actions .btn-checkout-now { background:var(--gold); border-color:var(--gold); color:var(--green-dark); font-weight:600; }
         .header-actions .btn-checkout-now:hover { background:#e8c396; border-color:#e8c396; }
 
-        /* ===== CONTADOR DE VISITANTES (ACTUALIZADO) ===== */
+        /* ===== CONTADOR DE VISITANTES (CON GIF Y MENSAJE) ===== */
         #visitorCounter {
             display: flex;
             align-items: center;
@@ -105,7 +106,7 @@
             margin-right: 0.5rem;
         }
         #visitorCounter img {
-            height: 34px; /* Aumentado ligeramente */
+            height: 34px;
             width: auto;
             vertical-align: middle;
             border-radius: 4px;
@@ -160,7 +161,7 @@
         #maintenanceOverlay h2 { color:var(--wood-brown); margin-bottom:1rem; font-family: 'Playfair Display', serif;}
         #maintenanceOverlay p { font-size:1.2rem; color:#333; line-height:1.6; }
 
-        /* NOTA DE BIENVENIDA */
+        /* ===== NOTA DE BIENVENIDA (EMOJIS DE FRUTAS) ===== */
         .welcome-notes { 
             display: none;
             background: var(--notice-bg);
@@ -175,10 +176,12 @@
             display: flex;
             align-items: center;
             gap: 0.8rem;
+            line-height: 1.6;
         }
         .welcome-notes::before {
-            content: '📢';
-            font-size: 1.4rem;
+            content: '🌴';
+            font-size: 1.8rem;
+            margin-right: 0.5rem;
         }
 
         .section { display:none; animation:fadeIn 0.3s ease; }
@@ -186,6 +189,43 @@
         @keyframes fadeIn { from{opacity:0;transform:translateY(10px);} to{opacity:1;transform:translateY(0);} }
 
         #shopSection { grid-column: 1; }
+
+        /* ===== SKELETON LOADER (CARGANDO) ===== */
+        .skeleton-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(min(100%,200px),1fr));
+            gap: 1.5rem;
+            margin: 1.5rem 0;
+        }
+        .skeleton-card {
+            background: var(--white);
+            border-radius: 16px;
+            border: 1px solid rgba(139, 69, 19, 0.1);
+            box-shadow: var(--shadow);
+            padding: 1rem;
+            animation: pulse 1.5s infinite ease-in-out;
+        }
+        .skeleton-img {
+            width: 100%;
+            height: 160px;
+            background: var(--skeleton-bg);
+            border-radius: 8px;
+            margin-bottom: 0.8rem;
+        }
+        .skeleton-text {
+            height: 1rem;
+            background: var(--skeleton-bg);
+            border-radius: 4px;
+            margin-bottom: 0.5rem;
+        }
+        .skeleton-text.short { width: 60%; }
+        .skeleton-text.medium { width: 80%; }
+        @keyframes pulse {
+            0% { opacity: 0.6; }
+            50% { opacity: 1; }
+            100% { opacity: 0.6; }
+        }
+
         .grid-products { display:grid; grid-template-columns:repeat(auto-fill,minmax(min(100%,200px),1fr)); gap:1.5rem; margin:1.5rem 0; }
 
         .product-card { 
@@ -435,7 +475,7 @@
     <header class="header" id="mainHeader">
         <h1>🌴 <span id="storeNameHeader">BJ TROPICAL</span></h1>
         <div class="header-actions">
-            <!-- CONTADOR DE VISITANTES CON GIF, MENSAJE Y ETIQUETA -->
+            <!-- CONTADOR DE VISITANTES CON GIF Y MENSAJE -->
             <div id="visitorCounter" class="client-only">
                 <img src="https://i.gifer.com/origin/9f/9fc6a6f1ea0b47c9364f122c82e9a424.gif" alt="Haga su pedido">
                 <span class="text">¡Haga su pedido! No espere más.</span>
@@ -455,7 +495,14 @@
         <!-- COLUMNA IZQUIERDA: TIENDA -->
         <div id="shopSection" class="section active">
             <div id="welcomeNotes" class="welcome-notes" style="display:none;"></div>
-            <div id="productGrid" class="grid-products"><p class="empty-msg">Cargando productos...</p></div>
+            <!-- ESQUELETO DE CARGA (se muestra mientras se cargan los productos) -->
+            <div id="skeletonLoader" class="skeleton-grid">
+                <div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-text medium"></div><div class="skeleton-text short"></div></div>
+                <div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-text medium"></div><div class="skeleton-text short"></div></div>
+                <div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-text medium"></div><div class="skeleton-text short"></div></div>
+                <div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-text medium"></div><div class="skeleton-text short"></div></div>
+            </div>
+            <div id="productGrid" class="grid-products" style="display:none;"></div>
         </div>
 
         <!-- COLUMNA DERECHA: CARRITO -->
@@ -556,7 +603,7 @@
                         </div>
                         <div class="config-help">El contador se incrementa automáticamente con cada visita.</div>
                     </div>
-                    <div class="form-group"><label>Notas / Mensaje de bienvenida (Solo lo ve el cliente)</label><textarea id="welcomeNotesInput" rows="3" placeholder="Ej: ¡Bienvenido a BJ TROPICAL! Estamos actualizando nuestro catálogo."></textarea></div>
+                    <div class="form-group"><label>Notas / Mensaje de bienvenida (Solo lo ve el cliente)</label><textarea id="welcomeNotesInput" rows="3" placeholder="Ej: 🌴 ¡Bienvenido! Disfruta de nuestros productos frescos."></textarea></div>
                     <div class="form-group"><label>Notas al cliente (checkout)</label><textarea id="customerNotesInput" rows="3" placeholder="Ej: Los pedidos se entregan en 24 horas..."></textarea></div>
                     <div class="form-group"><label>Mensaje de mantenimiento</label><textarea id="maintenanceMessageInput" rows="2" placeholder="Ej: Estamos actualizando el catálogo."></textarea></div>
                     <div class="form-group"><label>Token de Bot de Telegram (admin)</label><input type="text" id="botToken" placeholder="123456:ABC-DEF"></div>
@@ -602,36 +649,51 @@
         async function apiGet(action, params = {}) { return apiCall(action, params); }
         async function apiPost(action, payload) { return apiCall(action, payload); }
 
-        let appData = { products: [], orders: [], nextOrderId: 1, shippingCost: 5.00, transferFee: 5.0, botToken: '', chatId: '', gasWebAppUrl: '', welcomeNotes: '', customerNotes: '', storeName: 'BJ TROPICAL', footerText: '© 2025 BJ TROPICAL - Boom Jesús', maintenanceMessage: '', apiUrl: '', backgroundImage: '', visitorCount: 0 };
+        let appData = { products: [], orders: [], nextOrderId: 1, shippingCost: 5.00, transferFee: 5.0, botToken: '', chatId: '', gasWebAppUrl: '', welcomeNotes: '🌴 ¡Bienvenido a BJ TROPICAL! 🍍🥭🍌 Disfruta de nuestros productos frescos de la finca. ¡Haz tu pedido ahora!', customerNotes: '', storeName: 'BJ TROPICAL', footerText: '© 2025 BJ TROPICAL - Boom Jesús', maintenanceMessage: '', apiUrl: '', backgroundImage: '', visitorCount: 0 };
         let cart = []; let isAdmin = false;
 
-        const CACHE_KEY = 'tienda_data_cache'; const CACHE_DURATION = 10 * 60 * 1000;
+        const CACHE_KEY = 'tienda_data_cache';
+        const CACHE_DURATION = 5 * 60 * 1000; // 5 minutos
 
         async function loadAllData() {
             const errorDiv = document.getElementById('connectionError'); errorDiv.style.display = 'none';
+            const skeleton = document.getElementById('skeletonLoader');
+            const productGrid = document.getElementById('productGrid');
+            
+            // Intentar cargar desde caché primero
             const cached = localStorage.getItem(CACHE_KEY);
             if (cached) {
                 try {
                     const cacheData = JSON.parse(cached);
-                    if (Date.now() - cacheData.timestamp < CACHE_DURATION) {
-                        appData.products = cacheData.products || []; appData.orders = cacheData.orders || [];
+                    const now = Date.now();
+                    if (now - cacheData.timestamp < CACHE_DURATION) {
+                        appData.products = cacheData.products || [];
+                        appData.orders = cacheData.orders || [];
                         if (cacheData.config) Object.assign(appData, cacheData.config);
                         if (appData.apiUrl) API_URL = appData.apiUrl;
-                        renderShopProducts(); renderAdminProducts(); renderAdminOrders();
+                        
+                        // Ocultar esqueleto y mostrar productos
+                        skeleton.style.display = 'none';
+                        productGrid.style.display = 'grid';
+                        renderShopProducts();
+                        renderAdminProducts(); renderAdminOrders();
                         updateStoreUI(); updateWelcomeNotes(); loadConfigForm(); updateMaintenanceMode();
                         applyBackgroundImage();
                         updateVisitorCountUI();
-                        console.log('⚡ Cargado INSTANTÁNEAMENTE desde caché');
+                        console.log('⚡ Cargado desde caché (menos de 0.1s)');
                     }
                 } catch (e) {}
             }
 
+            // Si no hay caché o está expirada, cargar desde la API en segundo plano
+            // Mientras tanto, el esqueleto se muestra (o la caché ya mostró algo)
             try {
                 let data = null;
                 const allDataRes = await apiGet('getAllData');
                 if (allDataRes.success) {
                     data = allDataRes.data;
                 } else {
+                    // Fallback a peticiones individuales
                     const configRes = await apiGet('getConfig');
                     if (configRes.success) Object.assign(appData, configRes.data || {});
                     const productsRes = await apiGet('getProducts');
@@ -655,19 +717,32 @@
                         appData.nextOrderId = maxId + 1;
                     }
                 }
+
+                // Guardar en caché
                 localStorage.setItem(CACHE_KEY, JSON.stringify({
-                    timestamp: Date.now(), products: appData.products, orders: appData.orders,
+                    timestamp: Date.now(),
+                    products: appData.products,
+                    orders: appData.orders,
                     config: { storeName: appData.storeName, footerText: appData.footerText, shippingCost: appData.shippingCost, transferFee: appData.transferFee, botToken: appData.botToken, chatId: appData.chatId, gasWebAppUrl: appData.gasWebAppUrl, welcomeNotes: appData.welcomeNotes, customerNotes: appData.customerNotes, maintenanceMessage: appData.maintenanceMessage, apiUrl: appData.apiUrl, backgroundImage: appData.backgroundImage, visitorCount: appData.visitorCount }
                 }));
-                updateStoreUI(); updateWelcomeNotes(); renderShopProducts(); renderCart();
-                renderAdminProducts(); renderAdminOrders(); loadConfigForm(); updateMaintenanceMode();
+
+                // Si aún no se mostró (caché vacía o expirada), ahora mostramos
+                if (!cached || Date.now() - JSON.parse(cached).timestamp >= CACHE_DURATION) {
+                    skeleton.style.display = 'none';
+                    productGrid.style.display = 'grid';
+                    renderShopProducts();
+                }
+                renderAdminProducts(); renderAdminOrders();
+                updateStoreUI(); updateWelcomeNotes(); loadConfigForm(); updateMaintenanceMode();
                 applyBackgroundImage();
                 updateVisitorCountUI();
-                console.log('✅ Datos reales actualizados');
+                console.log('✅ Datos actualizados desde la API');
             } catch (err) {
                 console.error('Error en segundo plano:', err);
-                if(appData.products.length === 0) {
-                    document.getElementById('productGrid').innerHTML = '<p class="empty-msg" style="color:#dc3545;">❌ Error al cargar los productos. Verifique su conexión.</p>';
+                // Si no hay caché y la API falla, mostrar mensaje de error
+                if (!cached) {
+                    skeleton.style.display = 'none';
+                    productGrid.innerHTML = '<p class="empty-msg" style="color:#dc3545;">❌ Error al cargar los productos. Verifique su conexión.</p>';
                 }
             }
         }
@@ -761,7 +836,7 @@
             available.forEach(p => {
                 const inCart = cart.find(item => item.productId === p.id);
                 const qty = inCart ? inCart.qty : 0; const remaining = p.stock - qty; const disabled = remaining <= 0;
-                const imgHtml = p.image ? `<img src="${p.image}" alt="${p.name}">` : '🌿';
+                const imgHtml = p.image ? `<img src="${p.image}" alt="${p.name}" loading="lazy">` : '🌿';
                 const descHtml = p.description ? `<div class="description">${p.description}</div>` : '';
                 const priceHtml = p.currency ? formatCurrency(p.price, p.currency) : formatCurrency(p.price, 'CUP');
                 // Calcular ventas y estrellas
@@ -778,7 +853,7 @@
         function openProductModal(productId) {
             const p = appData.products.find(pr => pr.id === productId); if (!p) return;
             const inCart = cart.find(item => item.productId === p.id); const qtyInCart = inCart ? inCart.qty : 0; const remaining = p.stock - qtyInCart; const disabled = remaining <= 0;
-            const imgHtml = p.image ? `<img src="${p.image}" style="max-width:100%; max-height:300px; border-radius:8px;">` : '🌿';
+            const imgHtml = p.image ? `<img src="${p.image}" style="max-width:100%; max-height:300px; border-radius:8px;" loading="lazy">` : '🌿';
             const priceHtml = p.currency ? formatCurrency(p.price, p.currency) : formatCurrency(p.price, 'CUP');
             const sales = getProductSales(p.id);
             const starsHtml = renderStars(sales);
@@ -968,7 +1043,7 @@
             if (appData.products.length === 0) { list.innerHTML = '<p class="empty-msg">No hay productos.</p>'; return; }
             let html = `<table><thead><tr><th>Imagen</th><th>Nombre</th><th>Precio</th><th>Moneda</th><th>Stock</th><th>Acciones</th></tr></thead><tbody>`;
             appData.products.forEach(p => {
-                const imgThumb = p.image ? `<img src="${p.image}" style="width:50px;height:50px;object-fit:cover;border-radius:4px;">` : '—';
+                const imgThumb = p.image ? `<img src="${p.image}" style="width:50px;height:50px;object-fit:cover;border-radius:4px;" loading="lazy">` : '—';
                 html += `<tr><td>${imgThumb}</td><td>${p.name}</td><td>${p.price.toFixed(2)}</td><td>${p.currency || 'CUP'}</td><td>${p.stock}</td><td><button class="btn btn-primary btn-sm" onclick="editProduct('${p.id}')">Editar</button> <button class="btn btn-danger btn-sm" onclick="deleteProduct('${p.id}')">Eliminar</button></td></tr>`;
             });
             html += `</tbody></table>`;
@@ -1180,6 +1255,17 @@
                 updateStoreUI(); updateWelcomeNotes(); updateMaintenanceMode();
                 applyBackgroundImage();
                 updateVisitorCountUI();
+                
+                // Actualizar la caché inmediatamente para que la próxima carga use los nuevos datos
+                const cached = localStorage.getItem(CACHE_KEY);
+                if (cached) {
+                    try {
+                        const cacheData = JSON.parse(cached);
+                        cacheData.config = config; // sobrescribir la configuración
+                        cacheData.timestamp = Date.now(); // renovar timestamp
+                        localStorage.setItem(CACHE_KEY, JSON.stringify(cacheData));
+                    } catch (e) {}
+                }
                 alert('Configuración guardada.');
             } catch (err) { alert('Error: ' + err.message); }
         });
