@@ -230,7 +230,7 @@
         .modal-box .btn-submit { background:var(--green-main); color:#fff; border:none; padding:0.7rem; width:100%; border-radius:8px; font-size:1.05rem; cursor:pointer; transition: 0.2s; }
         .modal-box .btn-submit:hover { background:var(--green-dark); }
 
-        /* ESTILOS PARA LA FACTURA IMPRIMIBLE */
+        /* ESTILOS PARA LA FACTURA IMPRIMIBLE (CORREGIDO UNA SOLA HOJA) */
         .invoice-container {
             font-family: 'Lato', sans-serif;
             color: #333;
@@ -250,10 +250,11 @@
             width: 100%;
             border-collapse: collapse;
             margin: 1rem 0;
+            font-size: 0.9rem;
         }
         .invoice-table th, .invoice-table td {
             border: 1px solid #ddd;
-            padding: 0.5rem;
+            padding: 0.4rem;
             text-align: left;
         }
         .invoice-table th {
@@ -280,7 +281,7 @@
             padding-top: 1rem;
             display: flex;
             justify-content: space-between;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
         }
         .invoice-footer .signature {
             width: 45%;
@@ -294,10 +295,29 @@
             text-align: center;
         }
         @media print {
+            @page { size: auto; margin: 0mm; }
             body * { visibility: hidden; }
             .invoice-container, .invoice-container * { visibility: visible; }
-            .invoice-container { position: absolute; left: 0; top: 0; width: 100%; padding: 2rem; background: white; }
+            .invoice-container {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: 100vh;
+                padding: 15mm;
+                background: white;
+                box-sizing: border-box;
+                display: flex;
+                flex-direction: column;
+                justify-content: flex-start;
+                page-break-after: avoid;
+                page-break-inside: avoid;
+                overflow: hidden;
+                font-size: 0.9rem;
+            }
             .invoice-container .no-print { display: none; }
+            .invoice-table th, .invoice-table td { padding: 0.3rem; }
+            .invoice-footer { font-size: 0.8rem; }
         }
 
         /* ADMIN PANEL - TABS Y TABLAS */
@@ -306,6 +326,9 @@
         .admin-tabs button.active { background:var(--green-dark); color:#fff; }
         .admin-tabs button:hover { background:rgba(255,255,255,0.9); border-color:var(--green-main); }
         
+        .admin-section { display:none !important; }
+        .admin-section.active { display:block !important; }
+
         .admin-form { background:rgba(255, 255, 255, 0.85); padding:1.2rem; border-radius:16px; margin-bottom:1.2rem; box-shadow:0 4px 12px rgba(0,0,0,0.04); border: 1px solid rgba(255,255,255,0.5); }
         .admin-form .form-row { display:grid; grid-template-columns:1fr 1fr; gap:0.8rem; }
         .admin-form .form-group { margin-bottom:0.8rem; }
@@ -397,6 +420,7 @@
             <button data-admin="orders">📋 Pedidos</button>
             <button data-admin="config">⚙️ Configuración</button>
         </div>
+        <!-- SECCIONES ADMIN (UNA SOLA SE MUESTRA A LA VEZ) -->
         <div id="adminProducts" class="admin-section active">
             <div class="admin-form">
                 <h3>Agregar / Editar producto</h3>
