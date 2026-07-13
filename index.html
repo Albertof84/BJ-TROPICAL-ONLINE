@@ -90,7 +90,7 @@
         .header-actions .btn-checkout-now { background:var(--gold); border-color:var(--gold); color:var(--green-dark); font-weight:600; }
         .header-actions .btn-checkout-now:hover { background:#e8c396; border-color:#e8c396; }
 
-        /* ===== CONTADOR DE VISITANTES (NUEVO DISEÑO CON GIF) ===== */
+        /* ===== CONTADOR DE VISITANTES (ACTUALIZADO) ===== */
         #visitorCounter {
             display: flex;
             align-items: center;
@@ -105,7 +105,7 @@
             margin-right: 0.5rem;
         }
         #visitorCounter img {
-            height: 28px;
+            height: 34px; /* Aumentado ligeramente */
             width: auto;
             vertical-align: middle;
             border-radius: 4px;
@@ -113,6 +113,10 @@
         #visitorCounter .text {
             font-weight: 600;
             margin: 0 2px;
+        }
+        #visitorCounter .label {
+            font-weight: 400;
+            margin-left: 2px;
         }
         #visitorCounter span.count {
             font-weight: 700;
@@ -431,10 +435,11 @@
     <header class="header" id="mainHeader">
         <h1>🌴 <span id="storeNameHeader">BJ TROPICAL</span></h1>
         <div class="header-actions">
-            <!-- CONTADOR DE VISITANTES CON GIF Y MENSAJE -->
+            <!-- CONTADOR DE VISITANTES CON GIF, MENSAJE Y ETIQUETA -->
             <div id="visitorCounter" class="client-only">
                 <img src="https://i.gifer.com/origin/9f/9fc6a6f1ea0b47c9364f122c82e9a424.gif" alt="Haga su pedido">
-                <span class="text">¡Haga su pedido!</span>
+                <span class="text">¡Haga su pedido! No espere más.</span>
+                <span class="label">Visitantes:</span>
                 <span class="count" id="visitorCountDisplay">0</span>
             </div>
             <button id="btnCart" class="client-only">🛒 Carrito <span class="cart-badge" id="cartCount">0</span></button>
