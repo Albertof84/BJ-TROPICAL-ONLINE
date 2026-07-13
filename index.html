@@ -366,6 +366,11 @@
                     <div class="form-group"><label>Mensaje de mantenimiento</label><textarea id="maintenanceMessageInput" rows="2" placeholder="Ej: Estamos actualizando el catálogo."></textarea></div>
                     <div class="form-group"><label>Token de Bot de Telegram (admin)</label><input type="text" id="botToken" placeholder="123456:ABC-DEF"></div>
                     <div class="form-group"><label>Chat ID del administrador</label><input type="text" id="chatId" placeholder="123456789"></div>
+                    
+                    <!-- NUEVOS CAMPOS PARA QR DE PAGOS EN LÍNEA -->
+                    <div class="form-group"><label>URL del QR para Transfermóvil</label><input type="url" id="qrTransfermovilInput" placeholder="https://ejemplo.com/transfermovil-qr.png"><div class="config-help">Pega el link de la imagen QR para Transfermóvil.</div></div>
+                    <div class="form-group"><label>URL del QR para Enzona</label><input type="url" id="qrEnzonaInput" placeholder="https://ejemplo.com/enzona-qr.png"><div class="config-help">Pega el link de la imagen QR para Enzona.</div></div>
+                    
                     <button type="submit" class="btn btn-primary">Guardar configuración</button>
                 </form>
             </div>
@@ -377,7 +382,7 @@
     </div>
 
     <div class="modal-overlay" id="productModal"><div class="modal-box" style="max-width:500px;"><button class="close-btn" id="productModalClose">&times;</button><div id="productModalContent"></div></div></div>
-    <div class="modal-overlay" id="checkoutModal"><div class="modal-box"><button class="close-btn" id="modalCloseBtn">&times;</button><h2>Datos de envío</h2><form id="orderForm"><div class="form-group"><label>Nombre completo *</label><input type="text" id="custName" required></div><div class="form-group"><label>Email *</label><input type="email" id="custEmail" required></div><div class="form-group"><label>Teléfono *</label><input type="text" id="custPhone" required></div><div class="form-group"><label>Dirección de envío *</label><textarea id="custAddress" rows="3" required></textarea></div><div class="form-group"><label>Método de pago</label><select id="custPayment"><option value="Efectivo">Efectivo</option><option value="Transferencia">Transferencia</option></select></div><div id="customerNotesCheckout" class="notes-box" style="display:none;"></div><div class="order-summary" id="orderSummaryContainer"></div><button type="submit" class="btn-submit">Confirmar pedido</button></form></div></div>
+    <div class="modal-overlay" id="checkoutModal"><div class="modal-box"><button class="close-btn" id="modalCloseBtn">&times;</button><h2>Datos de envío</h2><form id="orderForm"><div class="form-group"><label>Nombre completo *</label><input type="text" id="custName" required></div><div class="form-group"><label>Email *</label><input type="email" id="custEmail" required></div><div class="form-group"><label>Teléfono *</label><input type="text" id="custPhone" required></div><div class="form-group"><label>Dirección de envío *</label><textarea id="custAddress" rows="3" required></textarea></div><div class="form-group"><label>Método de pago</label><select id="custPayment"><option value="Efectivo">Efectivo</option><option value="Transferencia">Transferencia</option><option value="Transfermóvil">Transfermóvil</option><option value="Enzona">Enzona</option></select></div><div id="customerNotesCheckout" class="notes-box" style="display:none;"></div><div class="order-summary" id="orderSummaryContainer"></div><button type="submit" class="btn-submit">Confirmar pedido</button></form></div></div>
     <div class="modal-overlay" id="confirmationModal"><div class="modal-box" style="max-width:600px;"><button class="close-btn" id="confirmationClose">&times;</button><h2 id="confirmationModalTitle">✅ Pedido confirmado</h2><div id="confirmationContent"></div></div></div>
     <div class="modal-overlay" id="orderDetailModal"><div class="modal-box" style="max-width:700px;"><button class="close-btn" id="orderDetailClose">&times;</button><h2 id="orderDetailTitle">Detalle del pedido</h2><div id="orderDetailContent"></div></div></div>
 
@@ -409,7 +414,7 @@
         async function apiGet(action, params = {}) { return apiCall(action, params); }
         async function apiPost(action, payload) { return apiCall(action, payload); }
 
-        let appData = { products: [], orders: [], nextOrderId: 1, shippingCost: 5.00, transferFee: 5.0, botToken: '', chatId: '', gasWebAppUrl: '', welcomeNotes: '🌴 ¡Bienvenido a BJ TROPICAL! 🍍🥭🍌 Disfruta de nuestros productos frescos de la finca. ¡Haz tu pedido ahora!', customerNotes: '', storeName: 'BJ TROPICAL', footerText: '© 2025 BJ TROPICAL - Boom Jesús', maintenanceMessage: '', apiUrl: '', backgroundImage: '', visitorCount: 0 };
+        let appData = { products: [], orders: [], nextOrderId: 1, shippingCost: 5.00, transferFee: 5.0, botToken: '', chatId: '', gasWebAppUrl: '', welcomeNotes: '🌴 ¡Bienvenido a BJ TROPICAL! 🍍🥭🍌 Disfruta de nuestros productos frescos de la finca. ¡Haz tu pedido ahora!', customerNotes: '', storeName: 'BJ TROPICAL', footerText: '© 2025 BJ TROPICAL - Boom Jesús', maintenanceMessage: '', apiUrl: '', backgroundImage: '', visitorCount: 0, qrTransfermovil: '', qrEnzona: '' };
         let cart = []; let isAdmin = false;
 
         // === Blindaje: garantiza que products/orders siempre sean arrays ===
@@ -508,7 +513,7 @@
                     timestamp: Date.now(),
                     products: appData.products,
                     orders: appData.orders,
-                    config: { storeName: appData.storeName, footerText: appData.footerText, shippingCost: appData.shippingCost, transferFee: appData.transferFee, botToken: appData.botToken, chatId: appData.chatId, gasWebAppUrl: appData.gasWebAppUrl, welcomeNotes: appData.welcomeNotes, customerNotes: appData.customerNotes, maintenanceMessage: appData.maintenanceMessage, apiUrl: appData.apiUrl, backgroundImage: appData.backgroundImage, visitorCount: appData.visitorCount }
+                    config: { storeName: appData.storeName, footerText: appData.footerText, shippingCost: appData.shippingCost, transferFee: appData.transferFee, botToken: appData.botToken, chatId: appData.chatId, gasWebAppUrl: appData.gasWebAppUrl, welcomeNotes: appData.welcomeNotes, customerNotes: appData.customerNotes, maintenanceMessage: appData.maintenanceMessage, apiUrl: appData.apiUrl, backgroundImage: appData.backgroundImage, visitorCount: appData.visitorCount, qrTransfermovil: appData.qrTransfermovil, qrEnzona: appData.qrEnzona }
                 }));
 
                 renderShopProducts();
@@ -795,6 +800,15 @@
         function showConfirmation(order) {
             let productsHtml = ''; order.items.forEach(item => { const sub = item.price * item.qty; const currency = item.currency || 'CUP'; productsHtml += `<div class="summary-item"><span>${item.name} x${item.qty}</span><span>${formatCurrency(sub, currency)}</span></div>`; });
             let subtotalsHtml = ''; if(order.subtotals) { for (const [cur, amount] of Object.entries(order.subtotals)) { subtotalsHtml += `<div class="summary-item"><span>Subtotal en ${cur}</span><span>${formatCurrency(amount, cur)}</span></div>`; } }
+            
+            // Mostrar QR si el método de pago es Transfermóvil o Enzona
+            let qrHtml = '';
+            if (order.payment === 'Transfermóvil' && appData.qrTransfermovil) {
+                qrHtml = `<div style="text-align:center; margin:1rem 0;"><p style="font-weight:600;">Escanee el siguiente código para pagar con Transfermóvil</p><img src="${appData.qrTransfermovil}" style="max-width:200px; border-radius:8px; border:1px solid #ccc;"></div>`;
+            } else if (order.payment === 'Enzona' && appData.qrEnzona) {
+                qrHtml = `<div style="text-align:center; margin:1rem 0;"><p style="font-weight:600;">Escanee el siguiente código para pagar con Enzona</p><img src="${appData.qrEnzona}" style="max-width:200px; border-radius:8px; border:1px solid #ccc;"></div>`;
+            }
+
             const html = `
                 <p><strong>Pedido #${order.id}</strong>${order.invoiceNumber ? ` — <strong>Factura ${order.invoiceNumber}</strong>` : ''}</p>
                 <p><strong>Cliente:</strong> ${order.customerName}</p>
@@ -802,6 +816,7 @@
                 <p><strong>Teléfono:</strong> ${order.phone}</p>
                 <p><strong>Dirección:</strong> ${order.address}</p>
                 <p><strong>Pago:</strong> ${order.payment}</p>
+                ${qrHtml}
                 <hr><h4>Productos</h4><div class="summary-items">${productsHtml}</div>
                 <h4>Resumen</h4><div class="summary-items">${subtotalsHtml}</div>
                 <div class="row"><span>Envío</span><span>${formatCurrency(order.shipping, 'CUP')}</span></div>
@@ -894,9 +909,7 @@
                 const statusClass = o.status === 'entregado' ? 'entregado' : (o.status === 'envío' ? 'envío' : 'pendiente');
                 html += `<tr><td>${o.id}</td><td>${o.invoiceNumber || '—'}</td><td>${o.customerName}</td><td>${o.phone}</td><td>${formatCurrency(o.total, o.currency)}</td><td><span class="badge badge-${statusClass}">${o.status}</span></td><td>${new Date(o.date).toLocaleDateString()}</td><td>
                         <select data-action="changeStatus" data-id="${o.id}"><option value="pendiente" ${o.status==='pendiente'?'selected':''}>Pendiente</option><option value="envío" ${o.status==='envío'?'selected':''}>Envío</option><option value="entregado" ${o.status==='entregado'?'selected':''}>Entregado</option><option value="cancelado" ${o.status==='cancelado'?'selected':''}>Cancelado</option></select>
-                        <button class="btn btn-info btn-sm" data-action="viewDetail" data-id="${o.id}">📋 Detalle</button>
                         <button class="btn btn-warning btn-sm" data-action="invoice" data-id="${o.id}">📄 Factura</button>
-                        <button class="btn btn-success btn-sm" data-action="sendSms" data-id="${o.id}">📱 SMS</button>
                         <button class="btn btn-danger btn-sm" data-action="deleteOrder" data-id="${o.id}">Eliminar</button>
                     </td></tr>`;
             });
@@ -928,6 +941,14 @@
 
             const invoiceNum = order.invoiceNumber || 'S/N';
             const code = order.deliveryCode || 'N/A';
+
+            // Mostrar QR en la factura si el método de pago es Transfermóvil o Enzona
+            let qrInvoiceHtml = '';
+            if (order.payment === 'Transfermóvil' && appData.qrTransfermovil) {
+                qrInvoiceHtml = `<div style="text-align:center; margin-top:0.8rem;"><p style="font-weight:600;">Pague con Transfermóvil escaneando este código</p><img src="${appData.qrTransfermovil}" style="max-width:180px; border-radius:8px; border:1px solid #ccc;"></div>`;
+            } else if (order.payment === 'Enzona' && appData.qrEnzona) {
+                qrInvoiceHtml = `<div style="text-align:center; margin-top:0.8rem;"><p style="font-weight:600;">Pague con Enzona escaneando este código</p><img src="${appData.qrEnzona}" style="max-width:180px; border-radius:8px; border:1px solid #ccc;"></div>`;
+            }
 
             const html = `
                 <div class="invoice-container">
@@ -967,6 +988,8 @@
                         <p>Comisión: ${formatCurrency(order.fee, 'CUP')}</p>
                         <p class="grand-total">Total: ${formatCurrency(order.total, order.currency)}</p>
                     </div>
+                    
+                    ${qrInvoiceHtml}
 
                     <hr class="invoice-tear-line">
 
@@ -1002,23 +1025,20 @@
             const action = target.dataset.action; const id = parseInt(target.dataset.id);
             if (!action || !id) return;
             ensureDataIntegrity();
-            if (action === 'viewDetail') {
-                const order = appData.orders.find(o => o.id === id); if (!order) return;
-                document.getElementById('orderDetailTitle').textContent = `Detalle del pedido #${order.id}`;
-                let html = `<p><strong>Factura:</strong> ${order.invoiceNumber || '—'}</p><p><strong>Cliente:</strong> ${order.customerName}</p><p><strong>Teléfono:</strong> ${order.phone}</p><p><strong>Email:</strong> ${order.email}</p><p><strong>Dirección:</strong> ${order.address}</p><p><strong>Pago:</strong> ${order.payment}</p><p><strong>Estado:</strong> <span class="badge badge-${order.status}">${order.status}</span></p><p><strong>Código entrega:</strong> ${order.deliveryCode || 'No generado'}</p><hr><h4>Productos</h4><table><thead><tr><th>Producto</th><th>Cantidad</th><th>Precio unit.</th><th>Subtotal</th></tr></thead><tbody>`;
-                order.items.forEach(item => { const sub = item.price * item.qty; const currency = item.currency || 'CUP'; html += `<tr><td>${item.name}</td><td>${item.qty}</td><td>${formatCurrency(item.price, currency)}</td><td>${formatCurrency(sub, currency)}</td></tr>`; });
-                html += `</tbody></table><p>Total: ${formatCurrency(order.total, order.currency)}</p></div>`;
-                document.getElementById('orderDetailContent').innerHTML = html;
-                document.getElementById('orderDetailModal').classList.add('show');
-            }
             if (action === 'invoice') { showInvoice(id); }
-            if (action === 'sendSms') {
-                const order = appData.orders.find(o => o.id === id); if (!order || !order.phone) { alert('No encontrado'); return; }
-                window.open(`sms:${order.phone}?body=${encodeURIComponent(buildShippingSmsMessage(order))}`, '_blank');
-            }
             if (action === 'deleteOrder') {
                 if (!confirm('¿Eliminar pedido?')) return;
-                apiGet('deleteOrder', { id }).then(() => { appData.orders = appData.orders.filter(o => o.id !== id); renderAdminOrders(); });
+                apiGet('deleteOrder', { id }).then(() => { 
+                    appData.orders = appData.orders.filter(o => o.id !== id); 
+                    // Recalcular nextOrderId para evitar saltos
+                    if (appData.orders.length === 0) {
+                        appData.nextOrderId = 1;
+                    } else {
+                        const maxId = Math.max(...appData.orders.map(o => o.id || 0));
+                        appData.nextOrderId = maxId + 1;
+                    }
+                    renderAdminOrders(); 
+                });
             }
         });
 
@@ -1029,6 +1049,12 @@
             ensureDataIntegrity();
             const o = appData.orders.find(ord => ord.id === id); if (o) o.status = status;
             renderAdminOrders();
+
+            // Si el estado es "envío", abrir la app de SMS con el mensaje correspondiente
+            if (status === 'envío' && o && o.phone) {
+                const message = buildShippingSmsMessage(o);
+                window.open(`sms:${o.phone}?body=${encodeURIComponent(message)}`, '_blank');
+            }
         });
 
         function buildShippingSmsMessage(order) {
@@ -1049,6 +1075,8 @@
             document.getElementById('apiUrlInput').value = appData.apiUrl || ''; document.getElementById('gasWebAppUrl').value = appData.gasWebAppUrl || '';
             document.getElementById('backgroundImageInput').value = appData.backgroundImage || '';
             document.getElementById('adminVisitorCountDisplay').textContent = appData.visitorCount || 0;
+            document.getElementById('qrTransfermovilInput').value = appData.qrTransfermovil || '';
+            document.getElementById('qrEnzonaInput').value = appData.qrEnzona || '';
         }
 
         document.getElementById('configForm').addEventListener('submit', async function(e) {
@@ -1066,7 +1094,9 @@
                 apiUrl: document.getElementById('apiUrlInput').value.trim(),
                 gasWebAppUrl: document.getElementById('gasWebAppUrl').value.trim(),
                 backgroundImage: document.getElementById('backgroundImageInput').value.trim(),
-                visitorCount: appData.visitorCount
+                visitorCount: appData.visitorCount,
+                qrTransfermovil: document.getElementById('qrTransfermovilInput').value.trim(),
+                qrEnzona: document.getElementById('qrEnzonaInput').value.trim()
             };
             try {
                 const res = await apiPost('saveConfig', { config });
@@ -1099,7 +1129,7 @@
                     transferFee: appData.transferFee, botToken: appData.botToken, chatId: appData.chatId,
                     gasWebAppUrl: appData.gasWebAppUrl, welcomeNotes: appData.welcomeNotes, customerNotes: appData.customerNotes,
                     maintenanceMessage: appData.maintenanceMessage, apiUrl: appData.apiUrl, backgroundImage: appData.backgroundImage,
-                    visitorCount: 0
+                    visitorCount: 0, qrTransfermovil: appData.qrTransfermovil, qrEnzona: appData.qrEnzona
                 };
                 const res = await apiPost('saveConfig', { config });
                 if (!res.success) throw new Error(res.error);
