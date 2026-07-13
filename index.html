@@ -672,6 +672,9 @@
                     }
                 }
 
+                // ===== SEGURIDAD: Garantizar que appData.products sea un array =====
+                if (!Array.isArray(appData.products)) appData.products = [];
+
                 // Guardar en caché
                 localStorage.setItem(CACHE_KEY, JSON.stringify({
                     timestamp: Date.now(),
@@ -1024,6 +1027,10 @@
             try {
                 const res = await apiPost('saveProduct', { product });
                 if (!res.success) throw new Error(res.error || 'Error');
+                
+                // ===== SEGURIDAD: Antes de usar .push, garantizar que sea un array =====
+                if (!Array.isArray(appData.products)) appData.products = [];
+
                 if (id) { const idx = appData.products.findIndex(p => p.id === id); if (idx !== -1) appData.products[idx] = product; } else { appData.products.push(product); }
                 renderAdminProducts(); renderShopProducts();
                 document.getElementById('productFormAdmin').reset(); document.getElementById('editProductId').value = '';
@@ -1034,7 +1041,18 @@
 
         window.deleteProduct = async function(id) {
             if (!confirm('¿Eliminar producto?')) return;
-            try { const res = await apiGet('deleteProduct', { id }); if (!res.success) throw new Error(res.error); appData.products = appData.products.filter(p => p.id !== id); cart = cart.filter(i => i.productId !== id); renderAdminProducts(); renderShopProducts(); renderCart(); alert('Producto eliminado.'); } catch (err) { alert('Error: ' + err.message); }
+            try { 
+                const res = await apiGet('deleteProduct', { id }); 
+                if (!res.success) throw new Error(res.error); 
+                
+                // ===== SEGURIDAD: Antes de .filter, garantizar que sea un array =====
+                if (!Array.isArray(appData.products)) appData.products = [];
+                
+                appData.products = appData.products.filter(p => p.id !== id); 
+                cart = cart.filter(i => i.productId !== id); 
+                renderAdminProducts(); renderShopProducts(); renderCart(); 
+                alert('Producto eliminado.'); 
+            } catch (err) { alert('Error: ' + err.message); }
         };
 
         function renderAdminOrders() {
