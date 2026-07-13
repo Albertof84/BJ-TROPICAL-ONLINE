@@ -20,7 +20,6 @@
             --notice-bg: #fff3cd;
             --notice-border: #ffc107;
             --notice-text: #856404;
-            --skeleton-bg: #e0e0e0;
         }
 
         * { margin:0; padding:0; box-sizing:border-box; }
@@ -189,43 +188,6 @@
         @keyframes fadeIn { from{opacity:0;transform:translateY(10px);} to{opacity:1;transform:translateY(0);} }
 
         #shopSection { grid-column: 1; }
-
-        /* ===== SKELETON LOADER (CARGANDO) ===== */
-        .skeleton-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(min(100%,200px),1fr));
-            gap: 1.5rem;
-            margin: 1.5rem 0;
-        }
-        .skeleton-card {
-            background: var(--white);
-            border-radius: 16px;
-            border: 1px solid rgba(139, 69, 19, 0.1);
-            box-shadow: var(--shadow);
-            padding: 1rem;
-            animation: pulse 1.5s infinite ease-in-out;
-        }
-        .skeleton-img {
-            width: 100%;
-            height: 160px;
-            background: var(--skeleton-bg);
-            border-radius: 8px;
-            margin-bottom: 0.8rem;
-        }
-        .skeleton-text {
-            height: 1rem;
-            background: var(--skeleton-bg);
-            border-radius: 4px;
-            margin-bottom: 0.5rem;
-        }
-        .skeleton-text.short { width: 60%; }
-        .skeleton-text.medium { width: 80%; }
-        @keyframes pulse {
-            0% { opacity: 0.6; }
-            50% { opacity: 1; }
-            100% { opacity: 0.6; }
-        }
-
         .grid-products { display:grid; grid-template-columns:repeat(auto-fill,minmax(min(100%,200px),1fr)); gap:1.5rem; margin:1.5rem 0; }
 
         .product-card { 
@@ -495,14 +457,7 @@
         <!-- COLUMNA IZQUIERDA: TIENDA -->
         <div id="shopSection" class="section active">
             <div id="welcomeNotes" class="welcome-notes" style="display:none;"></div>
-            <!-- ESQUELETO DE CARGA (se muestra mientras se cargan los productos) -->
-            <div id="skeletonLoader" class="skeleton-grid">
-                <div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-text medium"></div><div class="skeleton-text short"></div></div>
-                <div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-text medium"></div><div class="skeleton-text short"></div></div>
-                <div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-text medium"></div><div class="skeleton-text short"></div></div>
-                <div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-text medium"></div><div class="skeleton-text short"></div></div>
-            </div>
-            <div id="productGrid" class="grid-products" style="display:none;"></div>
+            <div id="productGrid" class="grid-products"><p class="empty-msg">Cargando productos...</p></div>
         </div>
 
         <!-- COLUMNA DERECHA: CARRITO -->
@@ -661,7 +616,6 @@
 
         async function loadAllData() {
             const errorDiv = document.getElementById('connectionError'); errorDiv.style.display = 'none';
-            const skeleton = document.getElementById('skeletonLoader');
             const productGrid = document.getElementById('productGrid');
             
             // Intentar cargar desde caché primero
@@ -676,9 +630,6 @@
                         if (cacheData.config) Object.assign(appData, cacheData.config);
                         if (appData.apiUrl) API_URL = appData.apiUrl;
                         
-                        // Ocultar esqueleto y mostrar productos
-                        skeleton.style.display = 'none';
-                        productGrid.style.display = 'grid';
                         renderShopProducts();
                         renderAdminProducts(); renderAdminOrders();
                         updateStoreUI(); updateWelcomeNotes(); loadConfigForm(); updateMaintenanceMode();
@@ -690,7 +641,6 @@
             }
 
             // Si no hay caché o está expirada, cargar desde la API en segundo plano
-            // Mientras tanto, el esqueleto se muestra (o la caché ya mostró algo)
             try {
                 let data = null;
                 const allDataRes = await apiGet('getAllData');
@@ -730,12 +680,7 @@
                     config: { storeName: appData.storeName, footerText: appData.footerText, shippingCost: appData.shippingCost, transferFee: appData.transferFee, botToken: appData.botToken, chatId: appData.chatId, gasWebAppUrl: appData.gasWebAppUrl, welcomeNotes: appData.welcomeNotes, customerNotes: appData.customerNotes, maintenanceMessage: appData.maintenanceMessage, apiUrl: appData.apiUrl, backgroundImage: appData.backgroundImage, visitorCount: appData.visitorCount }
                 }));
 
-                // Si aún no se mostró (caché vacía o expirada), ahora mostramos
-                if (!cached || Date.now() - JSON.parse(cached).timestamp >= CACHE_DURATION) {
-                    skeleton.style.display = 'none';
-                    productGrid.style.display = 'grid';
-                    renderShopProducts();
-                }
+                renderShopProducts();
                 renderAdminProducts(); renderAdminOrders();
                 updateStoreUI(); updateWelcomeNotes(); loadConfigForm(); updateMaintenanceMode();
                 applyBackgroundImage();
@@ -745,7 +690,6 @@
                 console.error('Error en segundo plano:', err);
                 // Si no hay caché y la API falla, mostrar mensaje de error
                 if (!cached) {
-                    skeleton.style.display = 'none';
                     productGrid.innerHTML = '<p class="empty-msg" style="color:#dc3545;">❌ Error al cargar los productos. Verifique su conexión.</p>';
                 }
             }
