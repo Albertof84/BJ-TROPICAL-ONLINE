@@ -36,13 +36,13 @@
             position: relative;
         }
 
-        /* Superposición para legibilidad */
+        /* Superposición para legibilidad (más transparente) */
         body::after {
             content: '';
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(4px);
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(2px);
             z-index: 0;
             pointer-events: none;
         }
@@ -89,6 +89,36 @@
         .header-actions .cart-badge { background:#c0392b; color:#fff; border-radius:50%; padding:0.1rem 0.6rem; font-size:0.75rem; margin-left:0.3rem; }
         .header-actions .btn-checkout-now { background:var(--gold); border-color:var(--gold); color:var(--green-dark); font-weight:600; }
         .header-actions .btn-checkout-now:hover { background:#e8c396; border-color:#e8c396; }
+
+        /* ===== CONTADOR DE VISITANTES (NUEVO DISEÑO CON GIF) ===== */
+        #visitorCounter {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            font-size: 0.95rem;
+            color: var(--gold);
+            background: rgba(27, 59, 36, 0.7);
+            padding: 0.2rem 0.8rem;
+            border-radius: 20px;
+            backdrop-filter: blur(2px);
+            border: 1px solid var(--gold);
+            margin-right: 0.5rem;
+        }
+        #visitorCounter img {
+            height: 28px;
+            width: auto;
+            vertical-align: middle;
+            border-radius: 4px;
+        }
+        #visitorCounter .text {
+            font-weight: 600;
+            margin: 0 2px;
+        }
+        #visitorCounter span.count {
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-left: 2px;
+        }
 
         .client-only { display:inline-block; }
         .admin-mode .client-only { display:none !important; }
@@ -190,6 +220,19 @@
         .product-card .info button:hover:not(:disabled) { background: var(--green-dark); box-shadow: 0 4px 10px rgba(44, 94, 46, 0.3); }
         .product-card .info button:disabled { background:#adb5bd; cursor:not-allowed; box-shadow: none; }
 
+        /* ===== ESTRELLAS DE CALIFICACIÓN ===== */
+        .product-stars {
+            margin: 0.3rem 0;
+            font-size: 1rem;
+            letter-spacing: 2px;
+        }
+        .star-filled {
+            color: #FFD700;
+        }
+        .star-empty {
+            color: #d3d3d3;
+        }
+
         #cartSection {
             grid-column: 2;
             background: rgba(255, 255, 255, 0.95);
@@ -230,7 +273,7 @@
         .modal-box .btn-submit { background:var(--green-main); color:#fff; border:none; padding:0.7rem; width:100%; border-radius:8px; font-size:1.05rem; cursor:pointer; transition: 0.2s; }
         .modal-box .btn-submit:hover { background:var(--green-dark); }
 
-        /* ESTILOS PARA LA FACTURA IMPRIMIBLE (CORREGIDO UNA SOLA HOJA) */
+        /* ESTILOS PARA LA FACTURA IMPRIMIBLE (UNA SOLA HOJA CARTA) */
         .invoice-container {
             font-family: 'Lato', sans-serif;
             color: #333;
@@ -295,7 +338,10 @@
             text-align: center;
         }
         @media print {
-            @page { size: auto; margin: 0mm; }
+            @page { 
+                size: letter; 
+                margin: 10mm; 
+            }
             body * { visibility: hidden; }
             .invoice-container, .invoice-container * { visibility: visible; }
             .invoice-container {
@@ -303,16 +349,13 @@
                 left: 0;
                 top: 0;
                 width: 100%;
-                height: 100vh;
-                padding: 15mm;
+                height: auto;
+                padding: 0;
                 background: white;
                 box-sizing: border-box;
-                display: flex;
-                flex-direction: column;
-                justify-content: flex-start;
+                display: block;
                 page-break-after: avoid;
                 page-break-inside: avoid;
-                overflow: hidden;
                 font-size: 0.9rem;
             }
             .invoice-container .no-print { display: none; }
@@ -388,6 +431,12 @@
     <header class="header" id="mainHeader">
         <h1>🌴 <span id="storeNameHeader">BJ TROPICAL</span></h1>
         <div class="header-actions">
+            <!-- CONTADOR DE VISITANTES CON GIF Y MENSAJE -->
+            <div id="visitorCounter" class="client-only">
+                <img src="https://i.gifer.com/origin/9f/9fc6a6f1ea0b47c9364f122c82e9a424.gif" alt="Haga su pedido">
+                <span class="text">¡Haga su pedido!</span>
+                <span class="count" id="visitorCountDisplay">0</span>
+            </div>
             <button id="btnCart" class="client-only">🛒 Carrito <span class="cart-badge" id="cartCount">0</span></button>
             <button id="btnCheckoutNow" class="btn-checkout-now client-only" style="display:none;">📋 Solicitar pedido</button>
         </div>
@@ -494,6 +543,14 @@
                         <input type="url" id="backgroundImageInput" placeholder="https://ejemplo.com/fondo-pagina.jpg">
                         <div class="config-help">Pega el link de una imagen ya subida.</div>
                     </div>
+                    <div class="form-group">
+                        <label>Contador de visitantes</label>
+                        <div style="display:flex; gap:0.5rem; align-items:center;">
+                            <span id="adminVisitorCountDisplay" style="font-weight:700; font-size:1.2rem;">0</span>
+                            <button type="button" class="btn btn-danger btn-sm" id="resetVisitorBtn">Reiniciar contador</button>
+                        </div>
+                        <div class="config-help">El contador se incrementa automáticamente con cada visita.</div>
+                    </div>
                     <div class="form-group"><label>Notas / Mensaje de bienvenida (Solo lo ve el cliente)</label><textarea id="welcomeNotesInput" rows="3" placeholder="Ej: ¡Bienvenido a BJ TROPICAL! Estamos actualizando nuestro catálogo."></textarea></div>
                     <div class="form-group"><label>Notas al cliente (checkout)</label><textarea id="customerNotesInput" rows="3" placeholder="Ej: Los pedidos se entregan en 24 horas..."></textarea></div>
                     <div class="form-group"><label>Mensaje de mantenimiento</label><textarea id="maintenanceMessageInput" rows="2" placeholder="Ej: Estamos actualizando el catálogo."></textarea></div>
@@ -540,7 +597,7 @@
         async function apiGet(action, params = {}) { return apiCall(action, params); }
         async function apiPost(action, payload) { return apiCall(action, payload); }
 
-        let appData = { products: [], orders: [], nextOrderId: 1, shippingCost: 5.00, transferFee: 5.0, botToken: '', chatId: '', gasWebAppUrl: '', welcomeNotes: '', customerNotes: '', storeName: 'BJ TROPICAL', footerText: '© 2025 BJ TROPICAL - Boom Jesús', maintenanceMessage: '', apiUrl: '', backgroundImage: '' };
+        let appData = { products: [], orders: [], nextOrderId: 1, shippingCost: 5.00, transferFee: 5.0, botToken: '', chatId: '', gasWebAppUrl: '', welcomeNotes: '', customerNotes: '', storeName: 'BJ TROPICAL', footerText: '© 2025 BJ TROPICAL - Boom Jesús', maintenanceMessage: '', apiUrl: '', backgroundImage: '', visitorCount: 0 };
         let cart = []; let isAdmin = false;
 
         const CACHE_KEY = 'tienda_data_cache'; const CACHE_DURATION = 10 * 60 * 1000;
@@ -558,13 +615,11 @@
                         renderShopProducts(); renderAdminProducts(); renderAdminOrders();
                         updateStoreUI(); updateWelcomeNotes(); loadConfigForm(); updateMaintenanceMode();
                         applyBackgroundImage();
+                        updateVisitorCountUI();
                         console.log('⚡ Cargado INSTANTÁNEAMENTE desde caché');
                     }
                 } catch (e) {}
             }
-
-            // LOS PRODUCTOS DE EJEMPLO HAN SIDO ELIMINADOS. 
-            // SI NO HAY DATOS EN LA API, LA TIENDA MOSTRARÁ "No hay productos disponibles."
 
             try {
                 let data = null;
@@ -572,7 +627,6 @@
                 if (allDataRes.success) {
                     data = allDataRes.data;
                 } else {
-                    // Fallback a peticiones individuales si getAllData no existe
                     const configRes = await apiGet('getConfig');
                     if (configRes.success) Object.assign(appData, configRes.data || {});
                     const productsRes = await apiGet('getProducts');
@@ -598,11 +652,12 @@
                 }
                 localStorage.setItem(CACHE_KEY, JSON.stringify({
                     timestamp: Date.now(), products: appData.products, orders: appData.orders,
-                    config: { storeName: appData.storeName, footerText: appData.footerText, shippingCost: appData.shippingCost, transferFee: appData.transferFee, botToken: appData.botToken, chatId: appData.chatId, gasWebAppUrl: appData.gasWebAppUrl, welcomeNotes: appData.welcomeNotes, customerNotes: appData.customerNotes, maintenanceMessage: appData.maintenanceMessage, apiUrl: appData.apiUrl, backgroundImage: appData.backgroundImage }
+                    config: { storeName: appData.storeName, footerText: appData.footerText, shippingCost: appData.shippingCost, transferFee: appData.transferFee, botToken: appData.botToken, chatId: appData.chatId, gasWebAppUrl: appData.gasWebAppUrl, welcomeNotes: appData.welcomeNotes, customerNotes: appData.customerNotes, maintenanceMessage: appData.maintenanceMessage, apiUrl: appData.apiUrl, backgroundImage: appData.backgroundImage, visitorCount: appData.visitorCount }
                 }));
                 updateStoreUI(); updateWelcomeNotes(); renderShopProducts(); renderCart();
                 renderAdminProducts(); renderAdminOrders(); loadConfigForm(); updateMaintenanceMode();
                 applyBackgroundImage();
+                updateVisitorCountUI();
                 console.log('✅ Datos reales actualizados');
             } catch (err) {
                 console.error('Error en segundo plano:', err);
@@ -623,6 +678,45 @@
                 document.body.style.backgroundImage = 'none';
                 document.body.style.backgroundColor = '#f4f6f8';
             }
+        }
+
+        function updateVisitorCountUI() {
+            const count = appData.visitorCount || 0;
+            document.getElementById('visitorCountDisplay').textContent = count;
+            document.getElementById('adminVisitorCountDisplay').textContent = count;
+        }
+
+        // ============================================================
+        //  FUNCIÓN PARA CALIFICACIÓN POR VENTAS
+        // ============================================================
+        function getProductSales(productId) {
+            let totalSold = 0;
+            appData.orders.forEach(order => {
+                order.items.forEach(item => {
+                    if (item.productId === productId) {
+                        totalSold += item.qty;
+                    }
+                });
+            });
+            return totalSold;
+        }
+
+        function renderStars(sales) {
+            let stars = 0;
+            if (sales >= 500) stars = 5;
+            else if (sales >= 100) stars = 4;
+            else if (sales >= 50) stars = 3;
+            else if (sales >= 10) stars = 2;
+            else if (sales >= 1) stars = 1;
+            let html = '';
+            for (let i = 1; i <= 5; i++) {
+                if (i <= stars) {
+                    html += '<span class="star-filled">★</span>';
+                } else {
+                    html += '<span class="star-empty">★</span>';
+                }
+            }
+            return html;
         }
 
         function formatCurrency(amount, currency) { if (!currency) currency = 'CUP'; return amount.toFixed(2) + ' ' + currency; }
@@ -665,7 +759,10 @@
                 const imgHtml = p.image ? `<img src="${p.image}" alt="${p.name}">` : '🌿';
                 const descHtml = p.description ? `<div class="description">${p.description}</div>` : '';
                 const priceHtml = p.currency ? formatCurrency(p.price, p.currency) : formatCurrency(p.price, 'CUP');
-                html += `<div class="product-card" data-id="${p.id}"><div class="img-placeholder">${imgHtml}</div><div class="info"><h3>${p.name}</h3><div class="price">${priceHtml}</div>${descHtml}<div class="stock ${p.stock < 5 ? 'low' : ''}">Stock: ${p.stock}</div><button onclick="event.stopPropagation(); addToCart('${p.id}')" ${disabled ? 'disabled' : ''}>${disabled ? 'Sin stock' : 'Agregar al carrito'}</button></div></div>`;
+                // Calcular ventas y estrellas
+                const sales = getProductSales(p.id);
+                const starsHtml = renderStars(sales);
+                html += `<div class="product-card" data-id="${p.id}"><div class="img-placeholder">${imgHtml}</div><div class="info"><h3>${p.name}</h3><div class="price">${priceHtml}</div><div class="product-stars">${starsHtml}</div>${descHtml}<div class="stock ${p.stock < 5 ? 'low' : ''}">Stock: ${p.stock}</div><button onclick="event.stopPropagation(); addToCart('${p.id}')" ${disabled ? 'disabled' : ''}>${disabled ? 'Sin stock' : 'Agregar al carrito'}</button></div></div>`;
             });
             document.getElementById('productGrid').innerHTML = html;
             document.querySelectorAll('.product-card').forEach(card => {
@@ -678,10 +775,13 @@
             const inCart = cart.find(item => item.productId === p.id); const qtyInCart = inCart ? inCart.qty : 0; const remaining = p.stock - qtyInCart; const disabled = remaining <= 0;
             const imgHtml = p.image ? `<img src="${p.image}" style="max-width:100%; max-height:300px; border-radius:8px;">` : '🌿';
             const priceHtml = p.currency ? formatCurrency(p.price, p.currency) : formatCurrency(p.price, 'CUP');
+            const sales = getProductSales(p.id);
+            const starsHtml = renderStars(sales);
             document.getElementById('productModalContent').innerHTML = `
                 <div style="text-align:center;">${imgHtml}</div>
                 <h2 style="margin:0.8rem 0 0.3rem;">${p.name}</h2>
                 <div style="font-size:1.2rem; font-weight:700; color:var(--wood-brown);">${priceHtml}</div>
+                <div class="product-stars" style="text-align:center;">${starsHtml}</div>
                 <div style="margin:0.5rem 0; color:#555;">${p.description || 'Sin descripción'}</div>
                 <div style="margin:0.3rem 0; color:#6c757d;">Stock disponible: ${p.stock}</div>
                 <div style="margin-top:1rem; display:flex; gap:0.5rem;">
@@ -1047,6 +1147,7 @@
             document.getElementById('maintenanceMessageInput').value = appData.maintenanceMessage || '';
             document.getElementById('apiUrlInput').value = appData.apiUrl || ''; document.getElementById('gasWebAppUrl').value = appData.gasWebAppUrl || '';
             document.getElementById('backgroundImageInput').value = appData.backgroundImage || '';
+            document.getElementById('adminVisitorCountDisplay').textContent = appData.visitorCount || 0;
         }
 
         document.getElementById('configForm').addEventListener('submit', async function(e) {
@@ -1063,7 +1164,8 @@
                 maintenanceMessage: document.getElementById('maintenanceMessageInput').value.trim(),
                 apiUrl: document.getElementById('apiUrlInput').value.trim(),
                 gasWebAppUrl: document.getElementById('gasWebAppUrl').value.trim(),
-                backgroundImage: document.getElementById('backgroundImageInput').value.trim()
+                backgroundImage: document.getElementById('backgroundImageInput').value.trim(),
+                visitorCount: appData.visitorCount // se mantiene el valor actual
             };
             try {
                 const res = await apiPost('saveConfig', { config });
@@ -1072,49 +1174,69 @@
                 if(appData.apiUrl) API_URL = appData.apiUrl;
                 updateStoreUI(); updateWelcomeNotes(); updateMaintenanceMode();
                 applyBackgroundImage();
+                updateVisitorCountUI();
                 alert('Configuración guardada.');
             } catch (err) { alert('Error: ' + err.message); }
         });
 
-        function showConfirmView(orderId) {
-            document.getElementById('shopSection').classList.remove('active');
-            document.getElementById('adminSection').classList.remove('active');
-            document.getElementById('confirmSection').style.display = 'block';
-            document.getElementById('confirmSection').classList.add('active');
-            const order = appData.orders.find(o => o.id === orderId);
-            if (!order) { document.getElementById('confirmContent').innerHTML = `<p style="color:red;">Pedido no encontrado.</p>`; return; }
-            if (order.status === 'entregado') {
-                document.getElementById('confirmContent').innerHTML = `<h2>✅ Pedido #${order.id} ya fue entregado</h2><p>Cliente: ${order.customerName}</p><button class="btn btn-primary" onclick="window.location.href='.'">Volver</button>`;
-                return;
+        // ============================================================
+        //  REINICIAR CONTADOR DE VISITANTES
+        // ============================================================
+        document.getElementById('resetVisitorBtn').addEventListener('click', async function() {
+            if (!confirm('¿Reiniciar el contador de visitantes a 0?')) return;
+            try {
+                const config = { ...appData, visitorCount: 0 };
+                const res = await apiPost('saveConfig', { config });
+                if (!res.success) throw new Error(res.error);
+                appData.visitorCount = 0;
+                updateVisitorCountUI();
+                alert('✅ Contador reiniciado a 0.');
+            } catch (err) {
+                alert('Error: ' + err.message);
             }
-            let html = `
-                <h2>📦 Confirmar entrega #${order.id}</h2>
-                <p><strong>Cliente:</strong> ${order.customerName}</p>
-                <p><strong>Dirección:</strong> ${order.address}</p>
-                <hr>
-                <p style="margin:0.8rem 0;">Ingrese el código de entrega de 4 dígitos que aparece en el SMS.</p>
-                <form id="confirmForm">
-                    <div class="form-group"><label>Código de entrega</label><input type="text" id="deliveryCodeInput" placeholder="Ej: 4821" maxlength="4" pattern="[0-9]{4}" required></div>
-                    <button type="submit" class="btn-confirm">🔑 Confirmar entrega</button>
-                </form>
-                <div id="deliveryResult" style="margin-top: 1rem;"></div>
-            `;
-            document.getElementById('confirmContent').innerHTML = html;
-            document.getElementById('confirmForm').addEventListener('submit', async function(e) {
-                e.preventDefault();
-                const inputCode = document.getElementById('deliveryCodeInput').value.trim();
-                if (!inputCode || inputCode.length !== 4 || isNaN(inputCode)) {
-                    document.getElementById('deliveryResult').innerHTML = `<p style="color:#c0392b;">❌ Código inválido.</p>`; return;
+        });
+
+        // ============================================================
+        //  EVENTO PARA REINICIAR PEDIDOS
+        // ============================================================
+        document.getElementById('resetOrdersBtn').addEventListener('click', async function() {
+            if (!confirm('⚠️ ¿Borrar TODOS los pedidos? No se puede deshacer.')) return;
+            if (!confirm('¿Realmente deseas continuar?')) return;
+            try {
+                for (const order of appData.orders) {
+                    await apiGet('deleteOrder', { id: order.id });
                 }
-                if (order.deliveryCode !== inputCode) {
-                    document.getElementById('deliveryResult').innerHTML = `<p style="color:#c0392b;">❌ Código incorrecto. Contacte al administrador.</p>`; return;
+                appData.orders = [];
+                appData.nextOrderId = 1;
+                renderAdminOrders();
+                alert('✅ Todos los pedidos eliminados.');
+            } catch (err) {
+                alert('Error: ' + err.message);
+            }
+        });
+
+        // ============================================================
+        //  INCREMENTAR VISITANTES AL CARGAR LA PÁGINA
+        // ============================================================
+        async function incrementVisitor() {
+            try {
+                const res = await apiGet('incrementVisitorCount');
+                if (res.success) {
+                    appData.visitorCount = res.visitorCount;
+                    updateVisitorCountUI();
+                    // Actualizar también en localStorage para que la caché lo tenga
+                    const cached = localStorage.getItem(CACHE_KEY);
+                    if (cached) {
+                        const cacheData = JSON.parse(cached);
+                        if (cacheData.config) {
+                            cacheData.config.visitorCount = res.visitorCount;
+                            localStorage.setItem(CACHE_KEY, JSON.stringify(cacheData));
+                        }
+                    }
                 }
-                await apiGet('updateOrderStatus', { id: orderId, status: 'entregado' });
-                const orderToUpdate = appData.orders.find(o => o.id === orderId);
-                if (orderToUpdate) { orderToUpdate.status = 'entregado'; orderToUpdate.deliveryDate = new Date().toISOString(); }
-                document.getElementById('deliveryResult').innerHTML = `<p style="color:var(--green-main); font-weight:600; font-size:1.2rem;">✅ ¡Entrega confirmada! Estado: ENTREGADO.</p>`;
-                document.getElementById('confirmForm').style.display = 'none';
-            });
+            } catch (err) {
+                console.error('Error al incrementar visitantes:', err);
+            }
         }
 
         // ============================================================
@@ -1149,6 +1271,8 @@
             document.body.classList.remove('admin-mode');
             document.getElementById('shopSection').classList.add('active');
             document.getElementById('adminSection').style.display = 'none';
+            // Incrementar contador solo si no es admin (para no contar visitas del admin)
+            incrementVisitor();
         }
 
         const confirmId = urlParams.get('confirmar');
@@ -1193,7 +1317,10 @@
         document.getElementById('orderDetailClose').addEventListener('click', () => document.getElementById('orderDetailModal').classList.remove('show'));
         document.getElementById('orderDetailModal').addEventListener('click', e => { if (e.target === e.currentTarget) e.currentTarget.classList.remove('show'); });
 
-        async function init() { await loadAllData(); }
+        async function init() {
+            await loadAllData();
+            // Si no es admin, incrementar contador ya se llamó antes
+        }
         init();
     </script>
 </body>
