@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
     <style>
-        /* ===== ESTILOS (Mantenidos igual) ===== */
+        /* ===== ESTILOS ===== */
         :root {
             --green-dark: #1B3B24;
             --green-main: #2c5e2e;
@@ -147,19 +147,40 @@
         .modal-box .btn-submit { background:var(--green-main); color:#fff; border:none; padding:0.7rem; width:100%; border-radius:8px; font-size:1.05rem; cursor:pointer; transition: 0.2s; }
         .modal-box .btn-submit:hover { background:var(--green-dark); }
 
-        .invoice-container { font-family: 'Lato', sans-serif; color: #333; }
-        .invoice-header { text-align: center; border-bottom: 2px solid var(--gold); padding-bottom: 0.5rem; margin-bottom: 1rem; }
-        .invoice-header h3 { font-family: 'Playfair Display', serif; color: var(--green-dark); margin: 0; }
-        .invoice-table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.9rem; }
-        .invoice-table th, .invoice-table td { border: 1px solid #ddd; padding: 0.4rem; text-align: left; }
+        /* ===== FACTURA COMPACTA - UNA SOLA HOJA ===== */
+        .invoice-container { font-family: 'Lato', sans-serif; color: #222; font-size: 0.85rem; line-height: 1.35; }
+        .invoice-header { text-align: center; border-bottom: 2px solid var(--gold); padding-bottom: 0.4rem; margin-bottom: 0.6rem; }
+        .invoice-header h3 { font-family: 'Playfair Display', serif; color: var(--green-dark); margin: 0; font-size: 1.2rem; }
+        .invoice-header .invoice-sub { font-size: 0.8rem; color: #666; margin-top: 0.1rem; }
+        .invoice-meta { display: flex; justify-content: space-between; font-size: 0.82rem; margin-bottom: 0.5rem; flex-wrap: wrap; gap: 0.3rem; }
+        .invoice-meta div strong { color: var(--green-dark); }
+        .invoice-block-title { font-weight: 700; color: var(--green-dark); font-size: 0.85rem; margin: 0.5rem 0 0.2rem; border-bottom: 1px solid #eee; padding-bottom: 0.15rem; }
+        .invoice-client-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.1rem 1rem; font-size: 0.82rem; margin-bottom: 0.3rem; }
+        .invoice-table { width: 100%; border-collapse: collapse; margin: 0.4rem 0; font-size: 0.82rem; }
+        .invoice-table th, .invoice-table td { border: 1px solid #ddd; padding: 0.25rem 0.4rem; text-align: left; }
         .invoice-table th { background: var(--cream); font-weight: 600; }
-        .invoice-totals { text-align: right; margin-top: 1rem; }
-        .invoice-totals p { margin: 0.2rem 0; }
-        .invoice-delivery-code { background: #f1f1f1; padding: 0.5rem; border-radius: 8px; text-align: center; margin: 1rem 0; }
-        .invoice-footer { margin-top: 2rem; border-top: 1px dashed #ccc; padding-top: 1rem; display: flex; justify-content: space-between; font-size: 0.85rem; }
-        .invoice-footer .signature { width: 45%; }
-        .invoice-footer .signature span { display: block; margin-top: 2rem; border-top: 1px solid #333; width: 100%; padding-top: 0.3rem; text-align: center; }
-        @media print { @page { size: letter; margin: 10mm; } body * { visibility: hidden; } .invoice-container, .invoice-container * { visibility: visible; } .invoice-container { position: absolute; left: 0; top: 0; width: 100%; height: auto; padding: 0; background: white; box-sizing: border-box; display: block; page-break-after: avoid; page-break-inside: avoid; font-size: 0.9rem; } .invoice-container .no-print { display: none; } .invoice-table th, .invoice-table td { padding: 0.3rem; } .invoice-footer { font-size: 0.8rem; } }
+        .invoice-totals { text-align: right; margin-top: 0.4rem; font-size: 0.82rem; }
+        .invoice-totals p { margin: 0.1rem 0; }
+        .invoice-totals .grand-total { font-size: 1.05rem; font-weight: 700; color: var(--green-dark); border-top: 2px solid var(--green-dark); padding-top: 0.2rem; margin-top: 0.2rem; }
+        .invoice-tear-line { border: none; border-top: 2px dashed #999; margin: 0.7rem 0; position: relative; }
+        .invoice-tear-line::after { content: '✂ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -'; position: absolute; top: -0.65rem; left: 50%; transform: translateX(-50%); background: #fff; font-size: 0.65rem; color: #999; white-space: nowrap; overflow: hidden; max-width: 90%; }
+        .invoice-receipt { border: 1px solid #ccc; border-radius: 6px; padding: 0.6rem 0.8rem; background: #fafafa; }
+        .invoice-receipt h4 { font-family: 'Playfair Display', serif; color: var(--green-dark); font-size: 0.95rem; margin-bottom: 0.3rem; text-align: center; }
+        .invoice-receipt .receipt-row { display: flex; justify-content: space-between; font-size: 0.8rem; margin: 0.15rem 0; flex-wrap: wrap; gap: 0.3rem; }
+        .invoice-receipt .receipt-code { text-align: center; margin: 0.4rem 0; }
+        .invoice-receipt .receipt-code .code-value { font-size: 1.3rem; font-weight: 800; letter-spacing: 3px; color: var(--wood-brown); background: #fff; border: 1px dashed var(--gold); border-radius: 6px; padding: 0.15rem 0.8rem; display: inline-block; margin-top: 0.15rem; }
+        .invoice-receipt .receipt-field { font-size: 0.8rem; margin: 0.5rem 0 0.2rem; }
+        .invoice-receipt .receipt-field .fill-line { display: inline-block; border-bottom: 1px solid #333; min-width: 220px; height: 1em; margin-left: 0.4rem; }
+        .invoice-signatures { display: flex; justify-content: space-between; margin-top: 0.8rem; font-size: 0.78rem; }
+        .invoice-signatures .sig { width: 46%; text-align: center; }
+        .invoice-signatures .sig .line { border-top: 1px solid #333; margin-top: 1.6rem; padding-top: 0.2rem; }
+        @media print {
+            @page { size: letter; margin: 8mm; }
+            body * { visibility: hidden; }
+            .invoice-container, .invoice-container * { visibility: visible; }
+            .invoice-container { position: absolute; left: 0; top: 0; width: 100%; height: auto; padding: 0; background: white; box-sizing: border-box; }
+            .invoice-container .no-print { display: none; }
+        }
 
         .admin-tabs { display:flex; gap:0.5rem; margin-bottom:1.2rem; flex-wrap:wrap; }
         .admin-tabs button { background:rgba(255,255,255,0.6); border:1px solid transparent; padding:0.5rem 1.2rem; border-radius:50px; cursor:pointer; font-weight:500; transition:0.2s; font-size:clamp(0.8rem,1.5vw,0.95rem); }
@@ -391,8 +412,25 @@
         let appData = { products: [], orders: [], nextOrderId: 1, shippingCost: 5.00, transferFee: 5.0, botToken: '', chatId: '', gasWebAppUrl: '', welcomeNotes: '🌴 ¡Bienvenido a BJ TROPICAL! 🍍🥭🍌 Disfruta de nuestros productos frescos de la finca. ¡Haz tu pedido ahora!', customerNotes: '', storeName: 'BJ TROPICAL', footerText: '© 2025 BJ TROPICAL - Boom Jesús', maintenanceMessage: '', apiUrl: '', backgroundImage: '', visitorCount: 0 };
         let cart = []; let isAdmin = false;
 
+        // === Blindaje: garantiza que products/orders siempre sean arrays ===
+        function ensureDataIntegrity() {
+            if (!Array.isArray(appData.products)) appData.products = [];
+            if (!Array.isArray(appData.orders)) appData.orders = [];
+        }
+
         const CACHE_KEY = 'tienda_data_cache';
         const CACHE_DURATION = 5 * 60 * 1000; // 5 minutos
+        const RESERVED_CONFIG_KEYS = ['products', 'orders'];
+
+        // Aplica config a appData sin permitir que pise products/orders
+        function applyConfigSafely(configObj) {
+            if (!configObj) return;
+            const safeConfig = {};
+            Object.keys(configObj).forEach(k => {
+                if (!RESERVED_CONFIG_KEYS.includes(k)) safeConfig[k] = configObj[k];
+            });
+            Object.assign(appData, safeConfig);
+        }
 
         async function loadAllData() {
             const errorDiv = document.getElementById('connectionError');
@@ -408,13 +446,12 @@
                     const cacheData = JSON.parse(cached);
                     const now = Date.now();
                     if (now - cacheData.timestamp < CACHE_DURATION) {
-                        // === SEGURIDAD: Convertir a array vacío si no es array ===
+                        // Config primero, luego products/orders (evita que config los pise)
+                        applyConfigSafely(cacheData.config);
                         appData.products = Array.isArray(cacheData.products) ? cacheData.products : [];
                         appData.orders = Array.isArray(cacheData.orders) ? cacheData.orders : [];
-                        
-                        if (cacheData.config) Object.assign(appData, cacheData.config);
                         if (appData.apiUrl) API_URL = appData.apiUrl;
-                        
+
                         renderShopProducts();
                         renderAdminProducts(); renderAdminOrders();
                         updateStoreUI(); updateWelcomeNotes(); loadConfigForm(); updateMaintenanceMode();
@@ -434,13 +471,13 @@
                 } else {
                     // Fallback: peticiones individuales
                     const configRes = await apiGet('getConfig');
-                    if (configRes.success) Object.assign(appData, configRes.data || {});
-                    
+                    if (configRes.success) applyConfigSafely(configRes.data || {});
+
                     const productsRes = await apiGet('getProducts');
                     if (productsRes.success) {
                         appData.products = Array.isArray(productsRes.data) ? productsRes.data : [];
                     }
-                    
+
                     const ordersRes = await apiGet('getOrders');
                     if (ordersRes.success) {
                         appData.orders = Array.isArray(ordersRes.data) ? ordersRes.data : [];
@@ -452,17 +489,19 @@
                 }
 
                 if (data) {
-                    // === SEGURIDAD ESTÉRIL: SIEMPRE FORZAR ARRAY ===
+                    // Config PRIMERO (filtrando claves reservadas), luego products/orders forzados a array
+                    applyConfigSafely(data.config);
                     appData.products = Array.isArray(data.products) ? data.products : [];
                     appData.orders = Array.isArray(data.orders) ? data.orders : [];
-                    
-                    if (data.config) Object.assign(appData, data.config);
+
                     if (appData.apiUrl) API_URL = appData.apiUrl;
                     if (appData.orders.length > 0) {
                         const maxId = Math.max(...appData.orders.map(o => o.id || 0));
                         appData.nextOrderId = maxId + 1;
                     }
                 }
+
+                ensureDataIntegrity();
 
                 // Guardar en caché actualizada
                 localStorage.setItem(CACHE_KEY, JSON.stringify({
@@ -511,7 +550,6 @@
 
         function getProductSales(productId) {
             let totalSold = 0;
-            // Seguridad extra: si orders no es array, no hacer nada
             if (Array.isArray(appData.orders)) {
                 appData.orders.forEach(order => {
                     if (Array.isArray(order.items)) {
@@ -565,6 +603,7 @@
         }
 
         function renderShopProducts() {
+            ensureDataIntegrity();
             const available = appData.products.filter(p => p.stock > 0);
             if (available.length === 0) { document.getElementById('productGrid').innerHTML = '<p class="empty-msg">No hay productos disponibles.</p>'; return; }
             let html = '';
@@ -585,6 +624,7 @@
         }
 
         function openProductModal(productId) {
+            ensureDataIntegrity();
             const p = appData.products.find(pr => pr.id === productId); if (!p) return;
             const inCart = cart.find(item => item.productId === p.id); const qtyInCart = inCart ? inCart.qty : 0; const remaining = p.stock - qtyInCart; const disabled = remaining <= 0;
             const imgHtml = p.image ? `<img src="${p.image}" style="max-width:100%; max-height:300px; border-radius:8px;" loading="lazy">` : '🌿';
@@ -607,13 +647,14 @@
         }
 
         function renderCart() {
+            ensureDataIntegrity();
             const cartItemsDiv = document.getElementById('cartItems'); const cartTotalDiv = document.getElementById('cartTotal'); const cartTotalAmount = document.getElementById('cartTotalAmount');
             const checkoutBtn = document.getElementById('checkoutBtn'); const cartCount = document.getElementById('cartCount'); const btnCheckoutNow = document.getElementById('btnCheckoutNow');
             if (cart.length === 0) {
                 cartItemsDiv.innerHTML = '<p class="empty-cart">El carrito está vacío.</p>';
                 cartTotalDiv.style.display = 'none'; checkoutBtn.style.display = 'none'; btnCheckoutNow.style.display = 'none'; cartCount.textContent = '0'; return;
             }
-            let html = ''; let subtotal = 0; const mainCurrency = 'CUP';
+            let html = ''; let subtotal = 0;
             cart.forEach((item, index) => {
                 const p = appData.products.find(pr => pr.id === item.productId);
                 if (!p) { cart.splice(index, 1); renderCart(); return; }
@@ -629,6 +670,7 @@
         }
 
         window.addToCart = function(id) {
+            ensureDataIntegrity();
             const p = appData.products.find(pr => pr.id === id); if (!p) return;
             const item = cart.find(i => i.productId === id); const qty = item ? item.qty : 0;
             if (qty >= p.stock) { alert('Stock insuficiente.'); return; }
@@ -636,6 +678,7 @@
             renderCart(); renderShopProducts();
         };
         window.changeQty = function(id, delta) {
+            ensureDataIntegrity();
             const item = cart.find(i => i.productId === id); if (!item) return;
             const p = appData.products.find(pr => pr.id === id); if (!p) { cart = cart.filter(i => i.productId !== id); renderCart(); renderShopProducts(); return; }
             const newQty = item.qty + delta;
@@ -646,6 +689,7 @@
         };
 
         function openCheckout() {
+            ensureDataIntegrity();
             if (cart.length === 0) { alert('Carrito vacío.'); return; }
             for (const item of cart) { const p = appData.products.find(pr => pr.id === item.productId); if (!p || p.stock < item.qty) { alert('Stock insuficiente.'); return; } }
             const firstProduct = appData.products.find(p => p.id === cart[0].productId);
@@ -672,6 +716,7 @@
 
         document.getElementById('orderForm').addEventListener('submit', async function(e) {
             e.preventDefault();
+            ensureDataIntegrity();
             const name = document.getElementById('custName').value.trim(); const email = document.getElementById('custEmail').value.trim();
             const phone = document.getElementById('custPhone').value.trim(); const address = document.getElementById('custAddress').value.trim();
             const payment = document.getElementById('custPayment').value;
@@ -690,13 +735,16 @@
             const newOrder = {
                 id: appData.nextOrderId++, customerName: name, email, phone, address, payment,
                 items, subtotals: {}, subtotal: subtotalSum, shipping, fee, total,
-                currency: 'CUP', status: 'pendiente', date: new Date().toISOString(), deliveryCode: deliveryCode
+                currency: 'CUP', status: 'pendiente', date: new Date().toISOString(), deliveryCode: deliveryCode,
+                invoiceNumber: ''
             };
             cart.forEach(item => { const p = appData.products.find(pr => pr.id === item.productId); if(p){ const c = p.currency||'CUP'; if(!newOrder.subtotals[c]) newOrder.subtotals[c]=0; newOrder.subtotals[c]+=p.price*item.qty; } });
 
             try {
                 const result = await apiPost('saveOrder', { order: newOrder });
                 if (!result.success) throw new Error(result.error || 'Error');
+                // El backend genera y devuelve el número de factura oficial
+                newOrder.invoiceNumber = (result.data && result.data.invoiceNumber) ? result.data.invoiceNumber : '';
                 for (const item of cart) { const p = appData.products.find(pr => pr.id === item.productId); if (p) await apiPost('saveProduct', { product: p }); }
                 if (appData.gasWebAppUrl) { sendEmailWithGAS(newOrder).catch(err => console.error('Error enviando email:', err)); }
             } catch (err) {
@@ -704,6 +752,7 @@
                 for (const item of cart) { const p = appData.products.find(pr => pr.id === item.productId); if (p) p.stock += item.qty; }
                 submitBtn.disabled = false; submitBtn.textContent = 'Confirmar pedido'; return;
             }
+            appData.orders.push(newOrder);
             cart = []; renderCart(); renderShopProducts(); renderAdminProducts(); renderAdminOrders();
             submitBtn.disabled = false; submitBtn.textContent = 'Confirmar pedido';
             document.getElementById('checkoutModal').classList.remove('show');
@@ -714,7 +763,7 @@
 
         async function sendEmailWithGAS(order) {
             const url = appData.gasWebAppUrl; if (!url) throw new Error('URL no configurada');
-            const payload = { orderId: order.id, customerName: order.customerName, email: order.email, phone: order.phone, address: order.address, payment: order.payment, items: order.items, subtotals: order.subtotals, shipping: order.shipping, fee: order.fee, total: order.total, currency: order.currency, deliveryCode: order.deliveryCode };
+            const payload = { orderId: order.id, customerName: order.customerName, email: order.email, phone: order.phone, address: order.address, payment: order.payment, items: order.items, subtotals: order.subtotals, shipping: order.shipping, fee: order.fee, total: order.total, currency: order.currency, deliveryCode: order.deliveryCode, invoiceNumber: order.invoiceNumber };
             const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
             const data = await res.json(); if (!data.success) throw new Error(data.error || 'Error');
             return data;
@@ -747,7 +796,7 @@
             let productsHtml = ''; order.items.forEach(item => { const sub = item.price * item.qty; const currency = item.currency || 'CUP'; productsHtml += `<div class="summary-item"><span>${item.name} x${item.qty}</span><span>${formatCurrency(sub, currency)}</span></div>`; });
             let subtotalsHtml = ''; if(order.subtotals) { for (const [cur, amount] of Object.entries(order.subtotals)) { subtotalsHtml += `<div class="summary-item"><span>Subtotal en ${cur}</span><span>${formatCurrency(amount, cur)}</span></div>`; } }
             const html = `
-                <p><strong>Pedido #${order.id}</strong></p>
+                <p><strong>Pedido #${order.id}</strong>${order.invoiceNumber ? ` — <strong>Factura ${order.invoiceNumber}</strong>` : ''}</p>
                 <p><strong>Cliente:</strong> ${order.customerName}</p>
                 <p><strong>Email:</strong> ${order.email}</p>
                 <p><strong>Teléfono:</strong> ${order.phone}</p>
@@ -773,6 +822,7 @@
         //  ADMIN
         // ============================================================
         function renderAdminProducts() {
+            ensureDataIntegrity();
             const list = document.getElementById('adminProductList');
             if (appData.products.length === 0) { list.innerHTML = '<p class="empty-msg">No hay productos.</p>'; return; }
             let html = `<table><thead><tr><th>Imagen</th><th>Nombre</th><th>Precio</th><th>Moneda</th><th>Stock</th><th>Acciones</th></tr></thead><tbody>`;
@@ -785,6 +835,7 @@
         }
 
         window.editProduct = function(id) {
+            ensureDataIntegrity();
             const p = appData.products.find(pr => pr.id === id); if (!p) return;
             document.getElementById('editProductId').value = p.id; document.getElementById('prodNameAdmin').value = p.name;
             document.getElementById('prodPriceAdmin').value = p.price; document.getElementById('prodCurrencyAdmin').value = p.currency || 'CUP';
@@ -800,6 +851,7 @@
 
         document.getElementById('productFormAdmin').addEventListener('submit', async function(e) {
             e.preventDefault();
+            ensureDataIntegrity();
             const id = document.getElementById('editProductId').value; const name = document.getElementById('prodNameAdmin').value.trim();
             const price = parseFloat(document.getElementById('prodPriceAdmin').value); const currency = document.getElementById('prodCurrencyAdmin').value;
             const stock = parseInt(document.getElementById('prodStockAdmin').value); const description = document.getElementById('prodDescription').value.trim();
@@ -810,7 +862,6 @@
             try {
                 const res = await apiPost('saveProduct', { product });
                 if (!res.success) throw new Error(res.error || 'Error');
-                if (!Array.isArray(appData.products)) appData.products = [];
                 if (id) { const idx = appData.products.findIndex(p => p.id === id); if (idx !== -1) appData.products[idx] = product; } else { appData.products.push(product); }
                 renderAdminProducts(); renderShopProducts();
                 document.getElementById('productFormAdmin').reset(); document.getElementById('editProductId').value = '';
@@ -821,10 +872,10 @@
 
         window.deleteProduct = async function(id) {
             if (!confirm('¿Eliminar producto?')) return;
+            ensureDataIntegrity();
             try { 
                 const res = await apiGet('deleteProduct', { id }); 
                 if (!res.success) throw new Error(res.error); 
-                if (!Array.isArray(appData.products)) appData.products = [];
                 appData.products = appData.products.filter(p => p.id !== id); 
                 cart = cart.filter(i => i.productId !== id); 
                 renderAdminProducts(); renderShopProducts(); renderCart(); 
@@ -833,14 +884,15 @@
         };
 
         function renderAdminOrders() {
+            ensureDataIntegrity();
             const list = document.getElementById('adminOrderList');
-            if (!Array.isArray(appData.orders) || appData.orders.length === 0) { 
+            if (appData.orders.length === 0) { 
                 list.innerHTML = '<p class="empty-msg">No hay pedidos.</p>'; return; 
             }
-            let html = `<table><thead><tr><th>#</th><th>Cliente</th><th>Teléfono</th><th>Total</th><th>Estado</th><th>Fecha</th><th>Acciones</th></tr></thead><tbody>`;
-            appData.orders.sort((a, b) => new Date(b.date) - new Date(a.date)).forEach(o => {
+            let html = `<table><thead><tr><th>#</th><th>Factura</th><th>Cliente</th><th>Teléfono</th><th>Total</th><th>Estado</th><th>Fecha</th><th>Acciones</th></tr></thead><tbody>`;
+            appData.orders.slice().sort((a, b) => new Date(b.date) - new Date(a.date)).forEach(o => {
                 const statusClass = o.status === 'entregado' ? 'entregado' : (o.status === 'envío' ? 'envío' : 'pendiente');
-                html += `<tr><td>${o.id}</td><td>${o.customerName}</td><td>${o.phone}</td><td>${formatCurrency(o.total, o.currency)}</td><td><span class="badge badge-${statusClass}">${o.status}</span></td><td>${new Date(o.date).toLocaleDateString()}</td><td>
+                html += `<tr><td>${o.id}</td><td>${o.invoiceNumber || '—'}</td><td>${o.customerName}</td><td>${o.phone}</td><td>${formatCurrency(o.total, o.currency)}</td><td><span class="badge badge-${statusClass}">${o.status}</span></td><td>${new Date(o.date).toLocaleDateString()}</td><td>
                         <select data-action="changeStatus" data-id="${o.id}"><option value="pendiente" ${o.status==='pendiente'?'selected':''}>Pendiente</option><option value="envío" ${o.status==='envío'?'selected':''}>Envío</option><option value="entregado" ${o.status==='entregado'?'selected':''}>Entregado</option><option value="cancelado" ${o.status==='cancelado'?'selected':''}>Cancelado</option></select>
                         <button class="btn btn-info btn-sm" data-action="viewDetail" data-id="${o.id}">📋 Detalle</button>
                         <button class="btn btn-warning btn-sm" data-action="invoice" data-id="${o.id}">📄 Factura</button>
@@ -853,70 +905,92 @@
         }
 
         function showInvoice(orderId) {
+            ensureDataIntegrity();
             const order = appData.orders.find(o => o.id === orderId);
             if (!order) { alert('Pedido no encontrado.'); return; }
-            document.getElementById('orderDetailTitle').textContent = `Factura #${order.id}`;
+            document.getElementById('orderDetailTitle').textContent = `Factura ${order.invoiceNumber || '#' + order.id}`;
+
             let itemsHtml = '';
             order.items.forEach(item => {
                 const sub = item.price * item.qty;
                 const currency = item.currency || 'CUP';
-                itemsHtml += `<tr><td>${item.name}</td><td>${item.qty}</td><td>${formatCurrency(item.price, currency)}</td><td>${formatCurrency(sub, currency)}</td></tr>`;
+                itemsHtml += `<tr><td>${item.name}</td><td style="text-align:center;">${item.qty}</td><td style="text-align:right;">${formatCurrency(item.price, currency)}</td><td style="text-align:right;">${formatCurrency(sub, currency)}</td></tr>`;
             });
+
             let subtotalsHtml = '';
-            if (order.subtotals) {
+            if (order.subtotals && Object.keys(order.subtotals).length) {
                 for (const [cur, amount] of Object.entries(order.subtotals)) {
                     subtotalsHtml += `<p>Subtotal en ${cur}: ${formatCurrency(amount, cur)}</p>`;
                 }
             } else {
                 subtotalsHtml += `<p>Subtotal: ${formatCurrency(order.subtotal, order.currency)}</p>`;
             }
+
+            const invoiceNum = order.invoiceNumber || 'S/N';
+            const code = order.deliveryCode || 'N/A';
+
             const html = `
                 <div class="invoice-container">
-                    <div class="no-print" style="text-align:right; margin-bottom:1rem;">
+                    <div class="no-print" style="text-align:right; margin-bottom:0.6rem;">
                         <button onclick="window.print()" class="btn btn-primary" style="padding:0.5rem 1rem;">🖨️ Imprimir</button>
                     </div>
+
                     <div class="invoice-header">
                         <h3>BJ TROPICAL - Boom Jesús</h3>
-                        <p>Factura de venta</p>
+                        <div class="invoice-sub">Factura de venta</div>
                     </div>
-                    <p><strong>Pedido #:</strong> ${order.id}</p>
-                    <p><strong>Fecha:</strong> ${new Date(order.date).toLocaleString()}</p>
-                    <hr>
-                    <h4>Datos del cliente</h4>
-                    <p><strong>Cliente:</strong> ${order.customerName}</p>
-                    <p><strong>Teléfono:</strong> ${order.phone}</p>
-                    <p><strong>Email:</strong> ${order.email}</p>
-                    <p><strong>Dirección:</strong> ${order.address}</p>
-                    <p><strong>Método de pago:</strong> ${order.payment}</p>
-                    <hr>
-                    <h4>Detalle de productos</h4>
+
+                    <div class="invoice-meta">
+                        <div><strong>Factura N°:</strong> ${invoiceNum}</div>
+                        <div><strong>Pedido #:</strong> ${order.id}</div>
+                        <div><strong>Fecha:</strong> ${new Date(order.date).toLocaleString('es-ES', {dateStyle:'short', timeStyle:'short'})}</div>
+                    </div>
+
+                    <div class="invoice-block-title">Datos del cliente</div>
+                    <div class="invoice-client-grid">
+                        <div><strong>Cliente:</strong> ${order.customerName}</div>
+                        <div><strong>Teléfono:</strong> ${order.phone}</div>
+                        <div><strong>Email:</strong> ${order.email}</div>
+                        <div><strong>Pago:</strong> ${order.payment}</div>
+                        <div style="grid-column:1/-1;"><strong>Dirección:</strong> ${order.address}</div>
+                    </div>
+
+                    <div class="invoice-block-title">Detalle de productos</div>
                     <table class="invoice-table">
-                        <thead><tr><th>Producto</th><th>Cantidad</th><th>Precio unit.</th><th>Subtotal</th></tr></thead>
+                        <thead><tr><th>Producto</th><th>Cant.</th><th>Precio unit.</th><th>Subtotal</th></tr></thead>
                         <tbody>${itemsHtml}</tbody>
                     </table>
+
                     <div class="invoice-totals">
                         ${subtotalsHtml}
-                        <p><strong>Envío:</strong> ${formatCurrency(order.shipping, 'CUP')}</p>
-                        <p><strong>Comisión:</strong> ${formatCurrency(order.fee, 'CUP')}</p>
-                        <p style="font-size:1.2rem; font-weight:700;">Total: ${formatCurrency(order.total, order.currency)}</p>
+                        <p>Envío: ${formatCurrency(order.shipping, 'CUP')}</p>
+                        <p>Comisión: ${formatCurrency(order.fee, 'CUP')}</p>
+                        <p class="grand-total">Total: ${formatCurrency(order.total, order.currency)}</p>
                     </div>
-                    <div class="invoice-delivery-code">
-                        <strong>Código de entrega:</strong> <span style="font-size:1.5rem; font-weight:bold;">${order.deliveryCode || 'N/A'}</span>
-                        <p style="margin-top:0.5rem; font-size:0.9rem;">Este código debe ser verificado por el repartidor al entregar el pedido.</p>
-                    </div>
-                    <div class="invoice-footer">
-                        <div class="signature">
-                            <strong>Comprobante de entrega - Cliente</strong>
-                            <span>Firma del cliente</span>
-                            <span>Fecha: ___________</span>
+
+                    <hr class="invoice-tear-line">
+
+                    <div class="invoice-receipt">
+                        <h4>🚚 Comprobante de entrega</h4>
+                        <div class="receipt-row"><span><strong>Pedido #:</strong> ${order.id}</span><span><strong>Factura:</strong> ${invoiceNum}</span></div>
+                        <div class="receipt-row"><span><strong>Cliente:</strong> ${order.customerName}</span></div>
+
+                        <div class="receipt-field">Nombre de quien recibe:<span class="fill-line"></span></div>
+                        <div class="receipt-field">Carnet de identidad:<span class="fill-line"></span></div>
+
+                        <div class="receipt-code">
+                            <div style="font-size:0.78rem; color:#666;">Código de seguridad de entrega</div>
+                            <div class="code-value">${code}</div>
+                            <div style="font-size:0.7rem; color:#888; margin-top:0.15rem;">El repartidor debe verificar este código antes de entregar el pedido.</div>
                         </div>
-                        <div class="signature">
-                            <strong>Comprobante de entrega - Proveedor</strong>
-                            <span>Firma del proveedor</span>
-                            <span>Fecha: ___________</span>
+
+                        <div class="invoice-signatures">
+                            <div class="sig"><div class="line">Firma de quien recibe</div></div>
+                            <div class="sig"><div class="line">Firma del repartidor</div></div>
                         </div>
                     </div>
-                    <p style="text-align:center; margin-top:1rem; font-size:0.8rem; color:#6c757d;">Este documento es una factura oficial. Conserve para cualquier reclamación.</p>
+
+                    <p style="text-align:center; margin-top:0.5rem; font-size:0.7rem; color:#6c757d;">Este documento es una factura oficial. Conserve para cualquier reclamación.</p>
                 </div>
             `;
             document.getElementById('orderDetailContent').innerHTML = html;
@@ -927,10 +1001,11 @@
             const target = e.target.closest('button'); if (!target) return;
             const action = target.dataset.action; const id = parseInt(target.dataset.id);
             if (!action || !id) return;
+            ensureDataIntegrity();
             if (action === 'viewDetail') {
                 const order = appData.orders.find(o => o.id === id); if (!order) return;
                 document.getElementById('orderDetailTitle').textContent = `Detalle del pedido #${order.id}`;
-                let html = `<p><strong>Cliente:</strong> ${order.customerName}</p><p><strong>Teléfono:</strong> ${order.phone}</p><p><strong>Email:</strong> ${order.email}</p><p><strong>Dirección:</strong> ${order.address}</p><p><strong>Pago:</strong> ${order.payment}</p><p><strong>Estado:</strong> <span class="badge badge-${order.status}">${order.status}</span></p><p><strong>Código entrega:</strong> ${order.deliveryCode || 'No generado'}</p><hr><h4>Productos</h4><table><thead><tr><th>Producto</th><th>Cantidad</th><th>Precio unit.</th><th>Subtotal</th></tr></thead><tbody>`;
+                let html = `<p><strong>Factura:</strong> ${order.invoiceNumber || '—'}</p><p><strong>Cliente:</strong> ${order.customerName}</p><p><strong>Teléfono:</strong> ${order.phone}</p><p><strong>Email:</strong> ${order.email}</p><p><strong>Dirección:</strong> ${order.address}</p><p><strong>Pago:</strong> ${order.payment}</p><p><strong>Estado:</strong> <span class="badge badge-${order.status}">${order.status}</span></p><p><strong>Código entrega:</strong> ${order.deliveryCode || 'No generado'}</p><hr><h4>Productos</h4><table><thead><tr><th>Producto</th><th>Cantidad</th><th>Precio unit.</th><th>Subtotal</th></tr></thead><tbody>`;
                 order.items.forEach(item => { const sub = item.price * item.qty; const currency = item.currency || 'CUP'; html += `<tr><td>${item.name}</td><td>${item.qty}</td><td>${formatCurrency(item.price, currency)}</td><td>${formatCurrency(sub, currency)}</td></tr>`; });
                 html += `</tbody></table><p>Total: ${formatCurrency(order.total, order.currency)}</p></div>`;
                 document.getElementById('orderDetailContent').innerHTML = html;
@@ -951,6 +1026,7 @@
             const target = e.target.closest('select'); if (!target || target.dataset.action !== 'changeStatus') return;
             const id = parseInt(target.dataset.id); const status = target.value;
             await apiGet('updateOrderStatus', { id, status });
+            ensureDataIntegrity();
             const o = appData.orders.find(ord => ord.id === id); if (o) o.status = status;
             renderAdminOrders();
         });
@@ -995,7 +1071,7 @@
             try {
                 const res = await apiPost('saveConfig', { config });
                 if (!res.success) throw new Error(res.error);
-                Object.assign(appData, config);
+                applyConfigSafely(config);
                 if(appData.apiUrl) API_URL = appData.apiUrl;
                 updateStoreUI(); updateWelcomeNotes(); updateMaintenanceMode();
                 applyBackgroundImage();
@@ -1017,7 +1093,14 @@
         document.getElementById('resetVisitorBtn').addEventListener('click', async function() {
             if (!confirm('¿Reiniciar el contador de visitantes a 0?')) return;
             try {
-                const config = { ...appData, visitorCount: 0 };
+                // Solo se envían claves de configuración reales (nunca products/orders)
+                const config = {
+                    storeName: appData.storeName, footerText: appData.footerText, shippingCost: appData.shippingCost,
+                    transferFee: appData.transferFee, botToken: appData.botToken, chatId: appData.chatId,
+                    gasWebAppUrl: appData.gasWebAppUrl, welcomeNotes: appData.welcomeNotes, customerNotes: appData.customerNotes,
+                    maintenanceMessage: appData.maintenanceMessage, apiUrl: appData.apiUrl, backgroundImage: appData.backgroundImage,
+                    visitorCount: 0
+                };
                 const res = await apiPost('saveConfig', { config });
                 if (!res.success) throw new Error(res.error);
                 appData.visitorCount = 0;
@@ -1029,6 +1112,7 @@
         document.getElementById('resetOrdersBtn').addEventListener('click', async function() {
             if (!confirm('⚠️ ¿Borrar TODOS los pedidos? No se puede deshacer.')) return;
             if (!confirm('¿Realmente deseas continuar?')) return;
+            ensureDataIntegrity();
             try {
                 for (const order of appData.orders) { await apiGet('deleteOrder', { id: order.id }); }
                 appData.orders = [];
@@ -1041,14 +1125,14 @@
         async function incrementVisitor() {
             try {
                 const res = await apiGet('incrementVisitorCount');
-                if (res.success) {
-                    appData.visitorCount = res.visitorCount;
+                if (res.success && res.data) {
+                    appData.visitorCount = res.data.visitorCount;
                     updateVisitorCountUI();
                     const cached = localStorage.getItem(CACHE_KEY);
                     if (cached) {
                         const cacheData = JSON.parse(cached);
                         if (cacheData.config) {
-                            cacheData.config.visitorCount = res.visitorCount;
+                            cacheData.config.visitorCount = res.data.visitorCount;
                             localStorage.setItem(CACHE_KEY, JSON.stringify(cacheData));
                         }
                     }
@@ -1130,6 +1214,7 @@
             document.getElementById('adminSection').classList.remove('active');
             document.getElementById('confirmSection').style.display = 'block';
             document.getElementById('confirmSection').classList.add('active');
+            ensureDataIntegrity();
             const order = appData.orders.find(o => o.id === orderId);
             if (!order) { document.getElementById('confirmContent').innerHTML = `<p style="color:red;">Pedido no encontrado.</p>`; return; }
             if (order.status === 'entregado') {
@@ -1155,7 +1240,7 @@
                 if (!inputCode || inputCode.length !== 4 || isNaN(inputCode)) {
                     document.getElementById('deliveryResult').innerHTML = `<p style="color:#c0392b;">❌ Código inválido.</p>`; return;
                 }
-                if (order.deliveryCode !== inputCode) {
+                if (String(order.deliveryCode) !== inputCode) {
                     document.getElementById('deliveryResult').innerHTML = `<p style="color:#c0392b;">❌ Código incorrecto. Contacte al administrador.</p>`; return;
                 }
                 await apiGet('updateOrderStatus', { id: orderId, status: 'entregado' });
