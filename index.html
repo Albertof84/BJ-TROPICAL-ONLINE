@@ -1047,22 +1047,29 @@
             const id = parseInt(target.dataset.id); const status = target.value;
             await apiGet('updateOrderStatus', { id, status });
             ensureDataIntegrity();
-            const o = appData.orders.find(ord => ord.id === id); if (o) o.status = status;
+            const o = appData.orders.find(ord => ord.id === id);
+            if (o) o.status = status;
             renderAdminOrders();
 
-            // Si el estado es "envío", abrir la app de SMS con el mensaje correspondiente
+            // CAMBIO: Si el estado es "envío", abrir la app de SMS con el nuevo mensaje (sin enlace)
             if (status === 'envío' && o && o.phone) {
                 const message = buildShippingSmsMessage(o);
-                window.open(`sms:${o.phone}?body=${encodeURIComponent(message)}`, '_blank');
+                // Usamos location.href para abrir inmediatamente (sin demora y sin ventana emergente)
+                window.location.href = `sms:${o.phone}?body=${encodeURIComponent(message)}`;
             }
         });
 
+        // CAMBIO: Nueva función para construir el SMS corto con datos de factura y sin enlace
         function buildShippingSmsMessage(order) {
-            const baseUrl = window.location.origin + window.location.pathname; const code = order.deliveryCode || 'N/A';
-            const link = baseUrl + '?confirmar=' + order.id;
-            let msg = `Estimado/a ${order.customerName}, su pedido #${order.id} de BJ TROPICAL ya va en camino. Código: ${code}. Confirme entrega en: ${link}`;
-            if (msg.length > 160) msg = `Pedido #${order.id} en camino. Código: ${code}. Confirme en: ${link}`;
-            return msg.slice(0, 160);
+            const pedido = `#${order.id}`;
+            const factura = order.invoiceNumber ? ` (Factura ${order.invoiceNumber})` : '';
+            const codigo = order.deliveryCode || 'N/A';
+            let msg = `BJ TROPICAL: Pedido ${pedido}${factura} en transporte. Código entrega: ${codigo}. Muestre al repartidor.`;
+            // Asegurar que no exceda los 160 caracteres
+            if (msg.length > 160) {
+                msg = `BJ TROPICAL: Pedido ${pedido} en transporte. Código: ${codigo}. Muestre al repartidor.`;
+            }
+            return msg;
         }
 
         function loadConfigForm() {
