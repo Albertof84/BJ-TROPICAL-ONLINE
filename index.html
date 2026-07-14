@@ -367,7 +367,7 @@
                     <div class="form-group"><label>Token de Bot de Telegram (admin)</label><input type="text" id="botToken" placeholder="123456:ABC-DEF"></div>
                     <div class="form-group"><label>Chat ID del administrador</label><input type="text" id="chatId" placeholder="123456789"></div>
                     
-                    <!-- NUEVOS CAMPOS PARA QR DE PAGOS EN LÍNEA -->
+                    <!-- CAMPOS PARA QR DE PAGOS EN LÍNEA -->
                     <div class="form-group"><label>URL del QR para Transfermóvil</label><input type="url" id="qrTransfermovilInput" placeholder="https://ejemplo.com/transfermovil-qr.png"><div class="config-help">Pega el link de la imagen QR para Transfermóvil.</div></div>
                     <div class="form-group"><label>URL del QR para Enzona</label><input type="url" id="qrEnzonaInput" placeholder="https://ejemplo.com/enzona-qr.png"><div class="config-help">Pega el link de la imagen QR para Enzona.</div></div>
                     
@@ -382,7 +382,7 @@
     </div>
 
     <div class="modal-overlay" id="productModal"><div class="modal-box" style="max-width:500px;"><button class="close-btn" id="productModalClose">&times;</button><div id="productModalContent"></div></div></div>
-    <div class="modal-overlay" id="checkoutModal"><div class="modal-box"><button class="close-btn" id="modalCloseBtn">&times;</button><h2>Datos de envío</h2><form id="orderForm"><div class="form-group"><label>Nombre completo *</label><input type="text" id="custName" required></div><div class="form-group"><label>Email *</label><input type="email" id="custEmail" required></div><div class="form-group"><label>Teléfono *</label><input type="text" id="custPhone" required></div><div class="form-group"><label>Dirección de envío *</label><textarea id="custAddress" rows="3" required></textarea></div><div class="form-group"><label>Método de pago</label><select id="custPayment"><option value="Efectivo">Efectivo</option><option value="Transferencia">Transferencia</option><option value="Transfermóvil">Transfermóvil</option><option value="Enzona">Enzona</option></select></div><div id="customerNotesCheckout" class="notes-box" style="display:none;"></div><div class="order-summary" id="orderSummaryContainer"></div><button type="submit" class="btn-submit">Confirmar pedido</button></form></div></div>
+    <div class="modal-overlay" id="checkoutModal"><div class="modal-box"><button class="close-btn" id="modalCloseBtn">&times;</button><h2>Datos de envío</h2><form id="orderForm"><div class="form-group"><label>Nombre completo *</label><input type="text" id="custName" required></div><div class="form-group"><label>Email (opcional)</label><input type="email" id="custEmail"></div><div class="form-group"><label>Teléfono *</label><input type="text" id="custPhone" required></div><div class="form-group"><label>WhatsApp (opcional)</label><input type="text" id="custWhatsapp" placeholder="Ej: 54778307"></div><div class="form-group"><label>Dirección de envío *</label><textarea id="custAddress" rows="3" required></textarea></div><div class="form-group"><label>Método de pago</label><select id="custPayment"><option value="Efectivo">Efectivo</option><option value="Transferencia">Transferencia</option><option value="Transfermóvil">Transfermóvil</option><option value="Enzona">Enzona</option></select></div><div id="customerNotesCheckout" class="notes-box" style="display:none;"></div><div class="order-summary" id="orderSummaryContainer"></div><button type="submit" class="btn-submit">Confirmar pedido</button></form></div></div>
     <div class="modal-overlay" id="confirmationModal"><div class="modal-box" style="max-width:600px;"><button class="close-btn" id="confirmationClose">&times;</button><h2 id="confirmationModalTitle">✅ Pedido confirmado</h2><div id="confirmationContent"></div></div></div>
     <div class="modal-overlay" id="orderDetailModal"><div class="modal-box" style="max-width:700px;"><button class="close-btn" id="orderDetailClose">&times;</button><h2 id="orderDetailTitle">Detalle del pedido</h2><div id="orderDetailContent"></div></div></div>
 
@@ -722,10 +722,13 @@
         document.getElementById('orderForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             ensureDataIntegrity();
-            const name = document.getElementById('custName').value.trim(); const email = document.getElementById('custEmail').value.trim();
-            const phone = document.getElementById('custPhone').value.trim(); const address = document.getElementById('custAddress').value.trim();
+            const name = document.getElementById('custName').value.trim(); 
+            const email = document.getElementById('custEmail').value.trim(); // opcional
+            const phone = document.getElementById('custPhone').value.trim();
+            const whatsapp = document.getElementById('custWhatsapp').value.trim(); // opcional
+            const address = document.getElementById('custAddress').value.trim();
             const payment = document.getElementById('custPayment').value;
-            if (!name || !email || !phone || !address) { alert('Completa todos los campos.'); return; }
+            if (!name || !phone || !address) { alert('Completa todos los campos obligatorios (Nombre, Teléfono, Dirección).'); return; }
             for (const item of cart) { const p = appData.products.find(pr => pr.id === item.productId); if (!p || p.stock < item.qty) { alert('Stock insuficiente.'); return; } }
 
             const submitBtn = e.target.querySelector('.btn-submit'); submitBtn.disabled = true; submitBtn.textContent = '⏳ Procesando...';
@@ -738,7 +741,7 @@
 
             const deliveryCode = String(Math.floor(1000 + Math.random() * 9000));
             const newOrder = {
-                id: appData.nextOrderId++, customerName: name, email, phone, address, payment,
+                id: appData.nextOrderId++, customerName: name, email, phone, whatsapp, address, payment,
                 items, subtotals: {}, subtotal: subtotalSum, shipping, fee, total,
                 currency: 'CUP', status: 'pendiente', date: new Date().toISOString(), deliveryCode: deliveryCode,
                 invoiceNumber: ''
@@ -751,7 +754,10 @@
                 // El backend genera y devuelve el número de factura oficial
                 newOrder.invoiceNumber = (result.data && result.data.invoiceNumber) ? result.data.invoiceNumber : '';
                 for (const item of cart) { const p = appData.products.find(pr => pr.id === item.productId); if (p) await apiPost('saveProduct', { product: p }); }
-                if (appData.gasWebAppUrl) { sendEmailWithGAS(newOrder).catch(err => console.error('Error enviando email:', err)); }
+                // Solo enviar email si el cliente proporcionó uno
+                if (appData.gasWebAppUrl && email) { 
+                    sendEmailWithGAS(newOrder).catch(err => console.error('Error enviando email:', err)); 
+                }
             } catch (err) {
                 alert('Error: ' + err.message);
                 for (const item of cart) { const p = appData.products.find(pr => pr.id === item.productId); if (p) p.stock += item.qty; }
@@ -812,8 +818,9 @@
             const html = `
                 <p><strong>Pedido #${order.id}</strong>${order.invoiceNumber ? ` — <strong>Factura ${order.invoiceNumber}</strong>` : ''}</p>
                 <p><strong>Cliente:</strong> ${order.customerName}</p>
-                <p><strong>Email:</strong> ${order.email}</p>
+                ${order.email ? `<p><strong>Email:</strong> ${order.email}</p>` : ''}
                 <p><strong>Teléfono:</strong> ${order.phone}</p>
+                ${order.whatsapp ? `<p><strong>WhatsApp:</strong> ${order.whatsapp}</p>` : ''}
                 <p><strong>Dirección:</strong> ${order.address}</p>
                 <p><strong>Pago:</strong> ${order.payment}</p>
                 ${qrHtml}
@@ -826,7 +833,8 @@
                 <p style="color:var(--green-main); font-weight:600;">✅ Pedido confirmado correctamente.</p>
                 <p style="color:var(--wood-brown); font-weight:600; margin-top:0.5rem;">🔑 Código de entrega generado: <strong>${order.deliveryCode}</strong></p>
                 <p style="color:#6c757d; font-size:0.9rem; margin-top:0.5rem;">
-                    <strong>📧 NOTA:</strong> Revise su correo electrónico, donde recibirá la factura detallada de su pedido.
+                    ${order.email ? `<strong>📧 NOTA:</strong> Revise su correo electrónico, donde recibirá la factura detallada de su pedido.` : ''}
+                    ${order.whatsapp ? `<strong>📱 NOTA:</strong> Si no tiene correo, recibirá la factura por WhatsApp al número ${order.whatsapp}.` : ''}
                 </p>
             `;
             document.getElementById('confirmationContent').innerHTML = html;
@@ -904,12 +912,13 @@
             if (appData.orders.length === 0) { 
                 list.innerHTML = '<p class="empty-msg">No hay pedidos.</p>'; return; 
             }
-            let html = `<table><thead><tr><th>#</th><th>Factura</th><th>Cliente</th><th>Teléfono</th><th>Total</th><th>Estado</th><th>Fecha</th><th>Acciones</th></tr></thead><tbody>`;
+            let html = `<table><thead><tr><th>#</th><th>Factura</th><th>Cliente</th><th>Teléfono</th><th>WhatsApp</th><th>Total</th><th>Estado</th><th>Fecha</th><th>Acciones</th></tr></thead><tbody>`;
             appData.orders.slice().sort((a, b) => new Date(b.date) - new Date(a.date)).forEach(o => {
                 const statusClass = o.status === 'entregado' ? 'entregado' : (o.status === 'envío' ? 'envío' : 'pendiente');
-                html += `<tr><td>${o.id}</td><td>${o.invoiceNumber || '—'}</td><td>${o.customerName}</td><td>${o.phone}</td><td>${formatCurrency(o.total, o.currency)}</td><td><span class="badge badge-${statusClass}">${o.status}</span></td><td>${new Date(o.date).toLocaleDateString()}</td><td>
+                html += `<tr><td>${o.id}</td><td>${o.invoiceNumber || '—'}</td><td>${o.customerName}</td><td>${o.phone}</td><td>${o.whatsapp || '—'}</td><td>${formatCurrency(o.total, o.currency)}</td><td><span class="badge badge-${statusClass}">${o.status}</span></td><td>${new Date(o.date).toLocaleDateString()}</td><td>
                         <select data-action="changeStatus" data-id="${o.id}"><option value="pendiente" ${o.status==='pendiente'?'selected':''}>Pendiente</option><option value="envío" ${o.status==='envío'?'selected':''}>Envío</option><option value="entregado" ${o.status==='entregado'?'selected':''}>Entregado</option><option value="cancelado" ${o.status==='cancelado'?'selected':''}>Cancelado</option></select>
                         <button class="btn btn-warning btn-sm" data-action="invoice" data-id="${o.id}">📄 Factura</button>
+                        ${o.whatsapp ? `<button class="btn btn-success btn-sm" data-action="whatsapp" data-id="${o.id}">📱 WhatsApp</button>` : ''}
                         <button class="btn btn-danger btn-sm" data-action="deleteOrder" data-id="${o.id}">Eliminar</button>
                     </td></tr>`;
             });
@@ -971,7 +980,8 @@
                     <div class="invoice-client-grid">
                         <div><strong>Cliente:</strong> ${order.customerName}</div>
                         <div><strong>Teléfono:</strong> ${order.phone}</div>
-                        <div><strong>Email:</strong> ${order.email}</div>
+                        ${order.email ? `<div><strong>Email:</strong> ${order.email}</div>` : ''}
+                        ${order.whatsapp ? `<div><strong>WhatsApp:</strong> ${order.whatsapp}</div>` : ''}
                         <div><strong>Pago:</strong> ${order.payment}</div>
                         <div style="grid-column:1/-1;"><strong>Dirección:</strong> ${order.address}</div>
                     </div>
@@ -1020,12 +1030,46 @@
             document.getElementById('orderDetailModal').classList.add('show');
         }
 
+        // Nueva función para enviar factura por WhatsApp (abre wa.me con el mensaje prellenado)
+        function sendInvoiceViaWhatsApp(order) {
+            if (!order.whatsapp) {
+                alert('Este pedido no tiene número de WhatsApp registrado.');
+                return;
+            }
+            // Construir el mensaje con los detalles de la factura (similar al email)
+            let itemsText = '';
+            order.items.forEach(item => {
+                const sub = item.price * item.qty;
+                const currency = item.currency || 'CUP';
+                itemsText += `\n• ${item.name} x${item.qty} = ${formatCurrency(sub, currency)}`;
+            });
+            let subtotalsText = '';
+            if (order.subtotals) {
+                for (const [cur, amount] of Object.entries(order.subtotals)) {
+                    subtotalsText += `\nSubtotal en ${cur}: ${formatCurrency(amount, cur)}`;
+                }
+            } else {
+                subtotalsText = `\nSubtotal: ${formatCurrency(order.subtotal, order.currency)}`;
+            }
+            const invoiceNum = order.invoiceNumber || 'S/N';
+            const code = order.deliveryCode || 'N/A';
+            const message = `BJ TROPICAL - Factura ${invoiceNum}\nPedido #${order.id}\nFecha: ${new Date(order.date).toLocaleString('es-ES', {dateStyle:'short', timeStyle:'short'})}\n\nCliente: ${order.customerName}\nTeléfono: ${order.phone}\n${order.email ? 'Email: '+order.email+'\n' : ''}Dirección: ${order.address}\nPago: ${order.payment}\n\nProductos:${itemsText}\n\n${subtotalsText}\nEnv\u00edo: ${formatCurrency(order.shipping, 'CUP')}\nComisi\u00f3n: ${formatCurrency(order.fee, 'CUP')}\nTotal: ${formatCurrency(order.total, order.currency)}\n\nCódigo de entrega: ${code}\n\nGracias por su compra. BJ TROPICAL`;
+            // Codificar para URL
+            const encoded = encodeURIComponent(message);
+            // Abrir WhatsApp con el número del cliente
+            window.open(`https://wa.me/${order.whatsapp}?text=${encoded}`, '_blank');
+        }
+
         document.getElementById('adminOrderList').addEventListener('click', function(e) {
             const target = e.target.closest('button'); if (!target) return;
             const action = target.dataset.action; const id = parseInt(target.dataset.id);
             if (!action || !id) return;
             ensureDataIntegrity();
             if (action === 'invoice') { showInvoice(id); }
+            if (action === 'whatsapp') {
+                const order = appData.orders.find(o => o.id === id);
+                if (order) sendInvoiceViaWhatsApp(order);
+            }
             if (action === 'deleteOrder') {
                 if (!confirm('¿Eliminar pedido?')) return;
                 apiGet('deleteOrder', { id }).then(() => { 
@@ -1051,7 +1095,7 @@
             if (o) o.status = status;
             renderAdminOrders();
 
-            // CAMBIO: Si el estado es "envío", abrir la app de SMS con el nuevo mensaje (sin enlace)
+            // Si el estado es "envío", abrir la app de SMS con el mensaje (sin enlace)
             if (status === 'envío' && o && o.phone) {
                 const message = buildShippingSmsMessage(o);
                 // Usamos location.href para abrir inmediatamente (sin demora y sin ventana emergente)
@@ -1059,7 +1103,7 @@
             }
         });
 
-        // CAMBIO: Nueva función para construir el SMS corto con datos de factura y sin enlace
+        // Función para construir el SMS corto con datos de factura y sin enlace
         function buildShippingSmsMessage(order) {
             const pedido = `#${order.id}`;
             const factura = order.invoiceNumber ? ` (Factura ${order.invoiceNumber})` : '';
